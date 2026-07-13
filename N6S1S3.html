@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 1 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --orange:#c9820a;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+  .mot-cle{color:var(--teal-dark);text-decoration:underline;}
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  .sous-consigne{
+    font-weight:bold;
+    margin:14px 0 8px;
+    font-size:0.95em;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:70px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:90px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+  .correction .ligne-erreur{margin-bottom:6px;}
+  .correction .ligne-erreur:last-child{margin-bottom:0;}
+
+  .mot-cliquable{
+    cursor:pointer;
+    padding:1px 3px;
+    border-radius:3px;
+  }
+  .mot-cliquable:hover{background:#f0e6d8;}
+  .mot-cliquable.selectionne{
+    background:#fce9b8;
+    text-decoration:underline;
+  }
+  .mot-cliquable.trouve{
+    background:#d9f2e3;
+    color:var(--vert);
+    font-weight:bold;
+    text-decoration:underline;
+  }
+  .mot-cliquable.faux-positif{
+    background:#fbe0dd;
+    color:var(--rouge);
+    text-decoration:line-through;
+  }
+  .mot-cliquable.manque{
+    background:#fdeccb;
+    color:var(--orange);
+    font-weight:bold;
+    border-bottom:2px dotted var(--orange);
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 1</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Complète le tableau comme il convient :</div>
+    <table id="table-synonymes">
+      <thead>
+        <tr><th>Mot</th><th>Synonyme</th><th>Antonyme</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">2</span> Choisis parmi les homophones celui qui convient :
+      <span class="mot-cle" style="color:#2e6da4;">son</span> / <span class="mot-cle" style="color:#c0392b;">sont</span>
+    </div>
+    <div class="phrase">
+      Pourtant <input type="text" class="rep rep-inline" id="rep-son1" autocomplete="off"> barbier, parce qu'il lui coupe les cheveux, connaît bien <input type="text" class="rep rep-inline" id="rep-son2" autocomplete="off"> secret.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-son">OK</button>
+    </div>
+    <div class="correction" id="correction-son"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Corrige les cinq erreurs.</div>
+
+    <div class="sous-consigne">a) Clique sur les 5 mots fautifs dans la phrase :</div>
+    <div class="phrase" id="phrase-cliquable"></div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-reperage">Vérifier le repérage</button>
+    </div>
+    <div class="correction" id="correction-reperage"></div>
+
+    <div class="sous-consigne">b) Réécris la phrase corrigée en entier :</div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-correction" placeholder="Réécris la phrase corrigée ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-correction">OK</button>
+    </div>
+    <div class="correction" id="correction-correction"></div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : synonymes / antonymes ----------
+
+  var motsSynAnt = [
+    {
+      mot: "Lever",
+      synonymes: ["soulever", "hisser", "dresser", "redresser", "élever", "remonter", "relever"],
+      antonymes: ["baisser", "abaisser", "descendre", "coucher", "incliner", "affaisser", "poser", "reposer"]
+    },
+    {
+      mot: "Endurance",
+      synonymes: ["résistance", "robustesse", "ténacité", "force", "persévérance", "résilience", "courage", "ardeur", "vaillance"],
+      antonymes: ["fragilité", "faiblesse", "lassitude", "épuisement", "mollesse", "vulnérabilité"]
+    },
+    {
+      mot: "Honnête",
+      synonymes: ["loyal", "sincère", "intègre", "droit", "franc", "digne de confiance", "vertueux", "probe", "correct", "juste", "fiable"],
+      antonymes: ["malhonnête", "menteur", "hypocrite", "fourbe", "déloyal", "tricheur", "corrompu", "faux"]
+    }
+  ];
+
+  var tbody = document.querySelector("#table-synonymes tbody");
+
+  motsSynAnt.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdSyn = document.createElement("td");
+    var inputSyn = document.createElement("input");
+    inputSyn.type = "text";
+    inputSyn.className = "rep";
+    inputSyn.setAttribute("data-index", index);
+    inputSyn.setAttribute("data-type", "synonyme");
+    inputSyn.setAttribute("autocomplete", "off");
+    tdSyn.appendChild(inputSyn);
+    var corrSyn = document.createElement("div");
+    corrSyn.className = "correction";
+    corrSyn.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.synonymes.join(", ");
+    tdSyn.appendChild(corrSyn);
+    tr.appendChild(tdSyn);
+
+    var tdAnt = document.createElement("td");
+    var inputAnt = document.createElement("input");
+    inputAnt.type = "text";
+    inputAnt.className = "rep";
+    inputAnt.setAttribute("data-index", index);
+    inputAnt.setAttribute("data-type", "antonyme");
+    inputAnt.setAttribute("autocomplete", "off");
+    tdAnt.appendChild(inputAnt);
+    var corrAnt = document.createElement("div");
+    corrAnt.className = "correction";
+    corrAnt.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.antonymes.join(", ");
+    tdAnt.appendChild(corrAnt);
+    tr.appendChild(tdAnt);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbody.appendChild(tr);
+  });
+
+  function estDansListe(valeur, liste){
+    var v = normaliser(valeur);
+    return liste.some(function(mot){ return normaliser(mot) === v; });
+  }
+
+  function verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item){
+    if (inputSyn.value.trim() === "") {
+      inputSyn.classList.remove("correct", "incorrect");
+      corrSyn.classList.remove("visible");
+    } else if (estDansListe(inputSyn.value, item.synonymes)) {
+      inputSyn.classList.add("correct");
+      inputSyn.classList.remove("incorrect");
+      corrSyn.classList.remove("visible");
+    } else {
+      inputSyn.classList.add("incorrect");
+      inputSyn.classList.remove("correct");
+      corrSyn.classList.add("visible");
+    }
+
+    if (inputAnt.value.trim() === "") {
+      inputAnt.classList.remove("correct", "incorrect");
+      corrAnt.classList.remove("visible");
+    } else if (estDansListe(inputAnt.value, item.antonymes)) {
+      inputAnt.classList.add("correct");
+      inputAnt.classList.remove("incorrect");
+      corrAnt.classList.remove("visible");
+    } else {
+      inputAnt.classList.add("incorrect");
+      inputAnt.classList.remove("correct");
+      corrAnt.classList.add("visible");
+    }
+  }
+
+  // ---------- Exercice 2 : homophones son / sont ----------
+
+  var repSon1 = document.getElementById("rep-son1");
+  var repSon2 = document.getElementById("rep-son2");
+  var corrSon = document.getElementById("correction-son");
+
+  function verifierSon(){
+    var v1 = normaliser(repSon1.value);
+    var v2 = normaliser(repSon2.value);
+    var ok1 = (v1 === "son");
+    var ok2 = (v2 === "son");
+
+    repSon1.classList.remove("correct", "incorrect");
+    repSon2.classList.remove("correct", "incorrect");
+    corrSon.classList.remove("visible");
+
+    if (repSon1.value.trim() !== "") {
+      repSon1.classList.add(ok1 ? "correct" : "incorrect");
+    }
+    if (repSon2.value.trim() !== "") {
+      repSon2.classList.add(ok2 ? "correct" : "incorrect");
+    }
+
+    if (!ok1 || !ok2) {
+      corrSon.innerHTML = "<b><u>Réponse :</u></b> <b>son</b> (déterminant possessif) dans les deux cas.<br>« <b>sont</b> » est le verbe être conjugué — il ne convient à aucune des deux phrases ici.";
+      corrSon.classList.add("visible");
+    }
+
+    return ok1 && ok2;
+  }
+
+  document.getElementById("btn-ok-son").addEventListener("click", verifierSon);
+
+  // ---------- Exercice 3a : repérage des erreurs par clic ----------
+
+  var phraseMots = [
+    "Le","roi","ne","voulu","pas","lui","payé","le","salaire","promis","et","posa",
+    "une","troisième","condition.","Avant","le","mariage,","le","tailleur","devait",
+    "capturé","un","sanglier","qui","causer","de","grand","ravages","dans","la","forêt."
+  ];
+
+  var indexErreurs = [3, 6, 21, 25, 27]; // voulu, payé, capturé, causer, grand
+
+  var conteneurPhrase = document.getElementById("phrase-cliquable");
+  var spansMots = [];
+
+  phraseMots.forEach(function(mot, i){
+    var span = document.createElement("span");
+    span.className = "mot-cliquable";
+    span.textContent = mot;
+    span.setAttribute("data-index", i);
+    span.addEventListener("click", function(){
+      span.classList.toggle("selectionne");
+    });
+    conteneurPhrase.appendChild(span);
+    conteneurPhrase.appendChild(document.createTextNode(" "));
+    spansMots.push(span);
+  });
+
+  var corrReperage = document.getElementById("correction-reperage");
+
+  var erreurs = [
+    { fautif: "voulu", correction: "voulut", explication: "« ne <u>voulu</u> pas » → « ne <b>voulut</b> pas » (passé simple de vouloir, 3<sup>e</sup> personne du singulier)" },
+    { fautif: "payé", correction: "payer", explication: "« lui <u>payé</u> » → « lui <b>payer</b> » (infinitif après le verbe vouloir)" },
+    { fautif: "capturé", correction: "capturer", explication: "« devait <u>capturé</u> » → « devait <b>capturer</b> » (infinitif après le verbe devoir)" },
+    { fautif: "causer", correction: "causait", explication: "« qui <u>causer</u> » → « qui <b>causait</b> » (imparfait, s'accorde avec « sanglier »)" },
+    { fautif: "grand", correction: "grands", explication: "« de <u>grand</u> ravages » → « de <b>grands</b> ravages » (accord au pluriel)" }
+  ];
+
+  function verifierReperage(){
+    var total = 0;
+    var trouves = 0;
+    var manques = [];
+    var fauxPositifs = [];
+
+    spansMots.forEach(function(span, i){
+      span.classList.remove("trouve", "faux-positif", "manque");
+      var estErreur = indexErreurs.indexOf(i) !== -1;
+      var estSelectionne = span.classList.contains("selectionne");
+
+      if (estErreur && estSelectionne) {
+        span.classList.add("trouve");
+        trouves++;
+      } else if (!estErreur && estSelectionne) {
+        span.classList.add("faux-positif");
+        fauxPositifs.push(span.textContent);
+      } else if (estErreur && !estSelectionne) {
+        span.classList.add("manque");
+        manques.push(span.textContent);
+      }
+    });
+
+    total = indexErreurs.length;
+
+    var html = "<b><u>Résultat du repérage :</u></b> " + trouves + " / " + total + " erreur(s) bien repérée(s).<br>";
+    if (fauxPositifs.length > 0) {
+      html += "Mot(s) sélectionné(s) à tort : <b>" + fauxPositifs.join(", ") + "</b><br>";
+    }
+    if (manques.length > 0) {
+      html += "Erreur(s) non repérée(s) : <b>" + manques.join(", ") + "</b><br>";
+    }
+
+    corrReperage.innerHTML = html;
+    corrReperage.className = "correction visible" + (trouves === total && fauxPositifs.length === 0 ? " info" : "");
+
+    return (trouves === total && fauxPositifs.length === 0);
+  }
+
+  document.getElementById("btn-ok-reperage").addEventListener("click", verifierReperage);
+
+  // ---------- Exercice 3b : réécriture corrigée ----------
+
+  var repCorrection = document.getElementById("rep-correction");
+  var corrCorrection = document.getElementById("correction-correction");
+
+  var phraseCorrigee = "Le roi ne voulut pas lui payer le salaire promis et posa une troisième condition. Avant le mariage, le tailleur devait capturer un sanglier qui causait de grands ravages dans la forêt.";
+
+  function verifierCorrection(){
+    repCorrection.classList.remove("correct", "incorrect");
+    corrCorrection.classList.remove("visible", "info");
+
+    if (repCorrection.value.trim() === "") return false;
+
+    var ok = normaliserTexte(repCorrection.value) === normaliserTexte(phraseCorrigee);
+
+    if (ok) {
+      repCorrection.classList.add("correct");
+    } else {
+      repCorrection.classList.add("incorrect");
+      var liste = erreurs.map(function(e){
+        return "<div class='ligne-erreur'>• " + e.explication + "</div>";
+      }).join("");
+      corrCorrection.innerHTML = "<b><u>Les 5 corrections attendues :</u></b><br><br>" + liste +
+        "<br><b><u>Phrase corrigée :</u></b><br>" + phraseCorrigee;
+      corrCorrection.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-correction").addEventListener("click", verifierCorrection);
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    motsSynAnt.forEach(function(item, index){
+      var inputSyn = document.querySelector('input[data-index="' + index + '"][data-type="synonyme"]');
+      var inputAnt = document.querySelector('input[data-index="' + index + '"][data-type="antonyme"]');
+      var corrSyn = inputSyn.parentElement.querySelector(".correction");
+      var corrAnt = inputAnt.parentElement.querySelector(".correction");
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+      total += 2;
+      if (inputSyn.classList.contains("correct")) correctes++;
+      if (inputAnt.classList.contains("correct")) correctes++;
+    });
+
+    total += 1;
+    if (verifierSon()) correctes++;
+
+    total += 1;
+    if (verifierReperage()) correctes++;
+
+    total += 1;
+    if (verifierCorrection()) correctes++;
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    document.querySelectorAll("#table-synonymes input.rep").forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+    repSon1.value = "";
+    repSon2.value = "";
+    repSon1.classList.remove("correct", "incorrect");
+    repSon2.classList.remove("correct", "incorrect");
+    corrSon.classList.remove("visible");
+
+    spansMots.forEach(function(span){
+      span.classList.remove("selectionne", "trouve", "faux-positif", "manque");
+    });
+    corrReperage.classList.remove("visible", "info");
+
+    repCorrection.value = "";
+    repCorrection.classList.remove("correct", "incorrect");
+    corrCorrection.classList.remove("visible");
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
