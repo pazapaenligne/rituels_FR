@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 1 - Séance 1</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .consigne{
+    font-weight:bold;
+    text-decoration:underline;
+    margin:20px 0 10px;
+    font-size:1.02em;
+  }
+
+  .verbe-titre{
+    color:var(--teal);
+    font-weight:bold;
+    font-size:1.2em;
+    text-align:center;
+    margin:26px 0 10px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:10px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+  }
+  th{
+    background:#eaf6f9;
+    font-size:0.95em;
+  }
+  .pronom{
+    font-weight:bold;
+    background:#f5f5f0;
+    width:70px;
+  }
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:5px 4px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    text-align:center;
+    background:#fffef9;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .badge{
+    position:absolute;
+    top:6px;
+    right:6px;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    border:2px solid var(--badge);
+    background:#fff;
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 1</div>
+    <div class="tag tag-seance">Séance 1</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <p class="consigne">Conjugue les verbes suivants aux quatre temps de l'indicatif indiqués :</p>
+
+  <div class="verbe-titre">Parler</div>
+  <table id="table-parler">
+    <thead>
+      <tr>
+        <th class="pronom"></th>
+        <th>présent</th>
+        <th>passé composé</th>
+        <th>imparfait</th>
+        <th>futur</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="verbe-titre">Finir</div>
+  <table id="table-finir">
+    <thead>
+      <tr>
+        <th class="pronom"></th>
+        <th>présent</th>
+        <th>passé composé</th>
+        <th>imparfait</th>
+        <th>futur</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  var pronoms = ["je","tu","il","nous","vous","ils"];
+
+  var donnees = {
+    "parler": {
+      "présent": ["je parle","tu parles","il parle","nous parlons","vous parlez","ils parlent"],
+      "passé composé": ["j'ai parlé","tu as parlé","il a parlé","nous avons parlé","vous avez parlé","ils ont parlé"],
+      "imparfait": ["je parlais","tu parlais","il parlait","nous parlions","vous parliez","ils parlaient"],
+      "futur": ["je parlerai","tu parleras","il parlera","nous parlerons","vous parlerez","ils parleront"]
+    },
+    "finir": {
+      "présent": ["je finis","tu finis","il finit","nous finissons","vous finissez","ils finissent"],
+      "passé composé": ["j'ai fini","tu as fini","il a fini","nous avons fini","vous avez fini","ils ont fini"],
+      "imparfait": ["je finissais","tu finissais","il finissait","nous finissions","vous finissiez","ils finissaient"],
+      "futur": ["je finirai","tu finiras","il finira","nous finirons","vous finirez","ils finiront"]
+    }
+  };
+
+  var temps = ["présent","passé composé","imparfait","futur"];
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function retirerPronom(texte){
+    return texte.replace(/^(je\s+|j'\s*|tu\s+|il\s+|elle\s+|on\s+|nous\s+|vous\s+|ils\s+|elles\s+)/,"");
+  }
+
+  function comparer(saisie, attendu){
+    var s = normaliser(saisie);
+    var a = normaliser(attendu);
+    return retirerPronom(s) === retirerPronom(a);
+  }
+
+  function construireTable(idTable, verbe){
+    var tbody = document.querySelector("#" + idTable + " tbody");
+    pronoms.forEach(function(pronom, i){
+      var tr = document.createElement("tr");
+
+      var tdPronom = document.createElement("td");
+      tdPronom.className = "pronom";
+      tdPronom.textContent = pronom;
+      tr.appendChild(tdPronom);
+
+      temps.forEach(function(t){
+        var td = document.createElement("td");
+        var input = document.createElement("input");
+        input.type = "text";
+        input.className = "rep";
+        input.setAttribute("data-verbe", verbe);
+        input.setAttribute("data-temps", t);
+        input.setAttribute("data-index", i);
+        input.setAttribute("autocomplete", "off");
+        td.appendChild(input);
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  construireTable("table-parler", "parler");
+  construireTable("table-finir", "finir");
+
+  var inputs = document.querySelectorAll("input.rep");
+
+  function verifier(){
+    var total = 0;
+    var correctes = 0;
+
+    inputs.forEach(function(input){
+      total++;
+      var verbe = input.getAttribute("data-verbe");
+      var t = input.getAttribute("data-temps");
+      var i = parseInt(input.getAttribute("data-index"), 10);
+      var attendu = donnees[verbe][t][i];
+      var saisie = input.value;
+
+      input.classList.remove("correct", "incorrect");
+
+      if (comparer(saisie, attendu)) {
+        input.classList.add("correct");
+        correctes++;
+      } else {
+        input.classList.add("incorrect");
+      }
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    inputs.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+    });
+    document.getElementById("score").textContent = "";
+  }
+
+  function verifierEnDirect(e){
+    var input = e.target;
+    var verbe = input.getAttribute("data-verbe");
+    var t = input.getAttribute("data-temps");
+    var i = parseInt(input.getAttribute("data-index"), 10);
+    var attendu = donnees[verbe][t][i];
+
+    if (comparer(input.value, attendu)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+    } else {
+      input.classList.remove("correct", "incorrect");
+    }
+  }
+
+  inputs.forEach(function(input){
+    input.addEventListener("input", verifierEnDirect);
+  });
+
+  document.getElementById("btnVerifier").addEventListener("click", verifier);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
