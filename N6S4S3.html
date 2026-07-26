@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 4 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 4</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Complète le tableau comme il convient :</div>
+    <table id="table-synonymes">
+      <thead>
+        <tr><th>Mot</th><th>Synonyme</th><th>Antonyme</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">2</span> Choisis parmi les homophones celui qui convient :
+      <span style="color:#2e6da4;text-decoration:underline;">ces</span> / <span style="color:#c0392b;text-decoration:underline;">c'est</span> / <span style="color:#2e8b57;text-decoration:underline;">ses</span>
+    </div>
+    <div class="phrase">
+      <input type="text" class="rep rep-inline" id="rep-ces1" autocomplete="off" style="width:70px;"> garçons regardent par la fenêtre. <input type="text" class="rep rep-inline" id="rep-ces2" autocomplete="off" style="width:70px;"> drôle de voir à quel point ils sont attentifs. L'un d'eux se retourne, <input type="text" class="rep rep-inline" id="rep-ces3" autocomplete="off" style="width:70px;"> parents sont arrivés pour le récupérer. Il met alors <input type="text" class="rep rep-inline" id="rep-ces4" autocomplete="off" style="width:70px;"> chaussures.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-ces">OK</button>
+    </div>
+    <div class="correction" id="correction-ces"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Réécris le texte en remplaçant « le voyageur » par « les voyageurs ».</div>
+    <div class="phrase">
+      Le voyageur sa décision est prise, il part. Il fait son sac, choisit au hasard une destination et avance sans se retourner. Parfois, il s'arrête, mais ne reste jamais longtemps au même endroit. Il va, il vient, par tous les moyens, terrestres ou aériens. Que veut-il ? Que cherche-t-il ? Nul ne le sait.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-voyageurs" placeholder="Réécris le texte ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-voyageurs">OK</button>
+    </div>
+    <div class="correction" id="correction-voyageurs"></div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : synonymes / antonymes ----------
+
+  var motsSynAnt = [
+    {
+      mot: "Acide",
+      synonymes: ["acidulé", "aigre", "aigrelet", "âcre", "sur"],
+      antonymes: ["doux", "sucré"]
+    },
+    {
+      mot: "Aimable",
+      synonymes: ["gentil", "courtois", "affable", "agréable", "accueillant", "avenant", "bienveillant"],
+      antonymes: ["désagréable", "impoli", "désobligeant", "froid", "hautain", "cassant"]
+    },
+    {
+      mot: "Modeste",
+      synonymes: ["humble", "effacé", "réservé", "simple", "discret"],
+      antonymes: ["vaniteux", "prétentieux", "arrogant", "orgueilleux", "fier"]
+    }
+  ];
+
+  var tbody = document.querySelector("#table-synonymes tbody");
+
+  motsSynAnt.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdSyn = document.createElement("td");
+    var inputSyn = document.createElement("input");
+    inputSyn.type = "text";
+    inputSyn.className = "rep";
+    inputSyn.setAttribute("data-index", index);
+    inputSyn.setAttribute("data-type", "synonyme");
+    inputSyn.setAttribute("autocomplete", "off");
+    tdSyn.appendChild(inputSyn);
+    var corrSyn = document.createElement("div");
+    corrSyn.className = "correction";
+    corrSyn.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.synonymes.join(", ");
+    tdSyn.appendChild(corrSyn);
+    tr.appendChild(tdSyn);
+
+    var tdAnt = document.createElement("td");
+    var inputAnt = document.createElement("input");
+    inputAnt.type = "text";
+    inputAnt.className = "rep";
+    inputAnt.setAttribute("data-index", index);
+    inputAnt.setAttribute("data-type", "antonyme");
+    inputAnt.setAttribute("autocomplete", "off");
+    tdAnt.appendChild(inputAnt);
+    var corrAnt = document.createElement("div");
+    corrAnt.className = "correction";
+    corrAnt.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.antonymes.join(", ");
+    tdAnt.appendChild(corrAnt);
+    tr.appendChild(tdAnt);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbody.appendChild(tr);
+  });
+
+  function estDansListe(valeur, liste){
+    var v = normaliser(valeur);
+    return liste.some(function(mot){ return normaliser(mot) === v; });
+  }
+
+  function verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item){
+    if (inputSyn.value.trim() === "") {
+      inputSyn.classList.remove("correct", "incorrect");
+      corrSyn.classList.remove("visible");
+    } else if (estDansListe(inputSyn.value, item.synonymes)) {
+      inputSyn.classList.add("correct");
+      inputSyn.classList.remove("incorrect");
+      corrSyn.classList.remove("visible");
+    } else {
+      inputSyn.classList.add("incorrect");
+      inputSyn.classList.remove("correct");
+      corrSyn.classList.add("visible");
+    }
+
+    if (inputAnt.value.trim() === "") {
+      inputAnt.classList.remove("correct", "incorrect");
+      corrAnt.classList.remove("visible");
+    } else if (estDansListe(inputAnt.value, item.antonymes)) {
+      inputAnt.classList.add("correct");
+      inputAnt.classList.remove("incorrect");
+      corrAnt.classList.remove("visible");
+    } else {
+      inputAnt.classList.add("incorrect");
+      inputAnt.classList.remove("correct");
+      corrAnt.classList.add("visible");
+    }
+  }
+
+  // ---------- Exercice 2 : homophones ces / c'est / ses ----------
+
+  var repCes1 = document.getElementById("rep-ces1");
+  var repCes2 = document.getElementById("rep-ces2");
+  var repCes3 = document.getElementById("rep-ces3");
+  var repCes4 = document.getElementById("rep-ces4");
+  var corrCes = document.getElementById("correction-ces");
+
+  function verifierCes(){
+    var v1 = normaliser(repCes1.value);
+    var v2 = normaliser(repCes2.value);
+    var v3 = normaliser(repCes3.value);
+    var v4 = normaliser(repCes4.value);
+    var ok1 = (v1 === "ces");
+    var ok2 = (v2 === "c'est");
+    var ok3 = (v3 === "ses");
+    var ok4 = (v4 === "ses");
+
+    repCes1.classList.remove("correct", "incorrect");
+    repCes2.classList.remove("correct", "incorrect");
+    repCes3.classList.remove("correct", "incorrect");
+    repCes4.classList.remove("correct", "incorrect");
+    corrCes.classList.remove("visible");
+
+    if (repCes1.value.trim() !== "") repCes1.classList.add(ok1 ? "correct" : "incorrect");
+    if (repCes2.value.trim() !== "") repCes2.classList.add(ok2 ? "correct" : "incorrect");
+    if (repCes3.value.trim() !== "") repCes3.classList.add(ok3 ? "correct" : "incorrect");
+    if (repCes4.value.trim() !== "") repCes4.classList.add(ok4 ? "correct" : "incorrect");
+
+    if (!ok1 || !ok2 || !ok3 || !ok4) {
+      corrCes.innerHTML = "<b><u>Réponses :</u></b> « <b>ces</b> » (déterminant démonstratif pluriel) pour « <b>ces</b> garçons ».<br>« <b>c'est</b> » (ce + est) pour « <b>c'est</b> drôle ».<br>« <b>ses</b> » (déterminant possessif) pour « <b>ses</b> parents » et « <b>ses</b> chaussures ».";
+      corrCes.classList.add("visible");
+    }
+
+    return ok1 && ok2 && ok3 && ok4;
+  }
+
+  document.getElementById("btn-ok-ces").addEventListener("click", verifierCes);
+
+  // ---------- Exercice 3 : réécriture avec accords au pluriel ----------
+
+  var repVoyageurs = document.getElementById("rep-voyageurs");
+  var corrVoyageurs = document.getElementById("correction-voyageurs");
+
+  var texteCorrige = "Les voyageurs, leur décision est prise, ils partent. Ils font leur sac, choisissent au hasard une destination et avancent sans se retourner. Parfois, ils s'arrêtent, mais ne restent jamais longtemps au même endroit. Ils vont, ils viennent, par tous les moyens, terrestres ou aériens. Que veulent-ils ? Que cherchent-ils ? Nul ne le sait.";
+
+  function verifierVoyageurs(){
+    repVoyageurs.classList.remove("correct", "incorrect");
+    corrVoyageurs.classList.remove("visible", "info");
+
+    if (repVoyageurs.value.trim() === "") return false;
+
+    var ok = normaliserTexte(repVoyageurs.value) === normaliserTexte(texteCorrige);
+
+    if (ok) {
+      repVoyageurs.classList.add("correct");
+    } else {
+      repVoyageurs.classList.add("incorrect");
+      corrVoyageurs.innerHTML = "<b><u>Attention aux accords en cascade</u></b> (verbes, pronoms possessifs, inversions) :<br><br>" + texteCorrige;
+      corrVoyageurs.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-voyageurs").addEventListener("click", verifierVoyageurs);
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    motsSynAnt.forEach(function(item, index){
+      var inputSyn = document.querySelector('input[data-index="' + index + '"][data-type="synonyme"]');
+      var inputAnt = document.querySelector('input[data-index="' + index + '"][data-type="antonyme"]');
+      var corrSyn = inputSyn.parentElement.querySelector(".correction");
+      var corrAnt = inputAnt.parentElement.querySelector(".correction");
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+      total += 2;
+      if (inputSyn.classList.contains("correct")) correctes++;
+      if (inputAnt.classList.contains("correct")) correctes++;
+    });
+
+    total += 1;
+    if (verifierCes()) correctes++;
+
+    total += 1;
+    if (verifierVoyageurs()) correctes++;
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    document.querySelectorAll("#table-synonymes input.rep").forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+    repCes1.value = "";
+    repCes2.value = "";
+    repCes3.value = "";
+    repCes4.value = "";
+    repCes1.classList.remove("correct", "incorrect");
+    repCes2.classList.remove("correct", "incorrect");
+    repCes3.classList.remove("correct", "incorrect");
+    repCes4.classList.remove("correct", "incorrect");
+    corrCes.classList.remove("visible");
+
+    repVoyageurs.value = "";
+    repVoyageurs.classList.remove("correct", "incorrect");
+    corrVoyageurs.classList.remove("visible");
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
