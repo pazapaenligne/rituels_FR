@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 3 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 3</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">1</span> Complète par
+      <span style="color:#2e6da4;text-decoration:underline;font-weight:bold;">ce</span> ou
+      <span style="color:#c0392b;text-decoration:underline;font-weight:bold;">se</span> :
+    </div>
+    <div class="phrase">
+      1) Elles <input type="text" class="rep rep-inline" id="rep-cesse1" autocomplete="off" style="width:60px;"> sont mises à réciter <input type="text" class="rep rep-inline" id="rep-cesse2" autocomplete="off" style="width:60px;"> poème que tu aimais.
+    </div>
+    <div class="phrase">
+      2) Alors, les lumières <input type="text" class="rep rep-inline" id="rep-cesse3" autocomplete="off" style="width:60px;"> sont allumées et la plupart des gens <input type="text" class="rep rep-inline" id="rep-cesse4" autocomplete="off" style="width:60px;"> sont levés.
+    </div>
+    <div class="phrase">
+      3) Ces enfants ne <input type="text" class="rep rep-inline" id="rep-cesse5" autocomplete="off" style="width:60px;"> disputent plus depuis quelque temps, mais rappelez-vous comme ils <input type="text" class="rep rep-inline" id="rep-cesse6" autocomplete="off" style="width:60px;"> détestaient.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-cesse">OK</button>
+    </div>
+    <div class="correction" id="correction-cesse"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">2</span> Réécris le texte en remplaçant « je » par « tu » :</div>
+    <div class="phrase">
+      Je n'étais pas convaincue. Mon cœur battait si fort que le monde entier devait l'entendre, et j'avais le ventre noué. Une fois en classe, je me suis assise au fond de la classe et j'ai entrepris de me colorier les ongles au marqueur pour masquer ma peur. Malgré tous mes efforts et ma bonne volonté, j'étais encore seule.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-tu" placeholder="Réécris le texte avec « tu » ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-tu">OK</button>
+    </div>
+    <div class="correction" id="correction-tu"></div>
+
+    <div class="sous-consigne">Dans le texte précédent, repère :</div>
+    <table id="table-reperage">
+      <thead>
+        <tr><th>Catégorie</th><th>Exemple trouvé</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : ce / se (6 blancs) ----------
+
+  var repsCesSe = ["rep-cesse1","rep-cesse2","rep-cesse3","rep-cesse4","rep-cesse5","rep-cesse6"].map(function(id){
+    return document.getElementById(id);
+  });
+  var attenduCesSe = ["se", "ce", "se", "se", "se", "se"];
+  var corrCesSe = document.getElementById("correction-cesse");
+
+  function verifierCesSe(){
+    var tousCorrects = true;
+    corrCesSe.classList.remove("visible");
+
+    repsCesSe.forEach(function(input, i){
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") {
+        tousCorrects = false;
+        return;
+      }
+      var ok = (normaliser(input.value) === attenduCesSe[i]);
+      input.classList.add(ok ? "correct" : "incorrect");
+      if (!ok) tousCorrects = false;
+    });
+
+    if (!tousCorrects) {
+      corrCesSe.innerHTML = "<b><u>Réponses :</u></b><br>" +
+        "1) Elles <b>se</b> sont mises à réciter <b>ce</b> poème...<br>" +
+        "2) les lumières <b>se</b> sont allumées et la plupart des gens <b>se</b> sont levés.<br>" +
+        "3) Ces enfants ne <b>se</b> disputent plus... comme ils <b>se</b> détestaient.<br>" +
+        "« <b>se</b> » (pronom réfléchi) fait partie d'un verbe pronominal ; « <b>ce</b> » (déterminant démonstratif) précède toujours un nom.";
+      corrCesSe.classList.add("visible");
+    }
+
+    return tousCorrects;
+  }
+
+  document.getElementById("btn-ok-cesse").addEventListener("click", verifierCesSe);
+
+  // ---------- Exercice 2 : réécriture je → tu ----------
+
+  var repTu = document.getElementById("rep-tu");
+  var corrTu = document.getElementById("correction-tu");
+
+  var texteTuCorrige = "Tu n'étais pas convaincue. Ton cœur battait si fort que le monde entier devait l'entendre, et tu avais le ventre noué. Une fois en classe, tu t'es assise au fond de la classe et tu as entrepris de te colorier les ongles au marqueur pour masquer ta peur. Malgré tous tes efforts et ta bonne volonté, tu étais encore seule.";
+
+  function verifierTu(){
+    repTu.classList.remove("correct", "incorrect");
+    corrTu.classList.remove("visible", "info");
+
+    if (repTu.value.trim() === "") return false;
+
+    var ok = normaliserTexte(repTu.value) === normaliserTexte(texteTuCorrige);
+
+    if (ok) {
+      repTu.classList.add("correct");
+    } else {
+      repTu.classList.add("incorrect");
+      corrTu.innerHTML = "<b><u>Attention aux accords</u></b> (pronoms, possessifs, accord du participe passé) :<br><br>" + texteTuCorrige;
+      corrTu.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-tu").addEventListener("click", verifierTu);
+
+  // ---------- Exercice 2 (suite) : repérage de catégories grammaticales ----------
+
+  var categoriesReperage = [
+    {
+      label: "Un déterminant",
+      accepte: ["mon", "le", "la", "les", "ma", "mes"],
+      feedback: "mon, le, la, les, ma ou mes"
+    },
+    {
+      label: "Un nom",
+      accepte: ["cœur", "monde", "ventre", "classe", "ongles", "marqueur", "peur", "efforts", "volonté"],
+      feedback: "cœur, monde, ventre, classe, ongles, marqueur, peur, efforts ou volonté"
+    },
+    {
+      label: "Un verbe",
+      accepte: ["étais", "battait", "devait", "avais", "suis", "ai", "entendre", "colorier", "masquer"],
+      feedback: "étais, battait, devait, avais, suis, ai (conjugués), ou entendre, colorier, masquer (à l'infinitif)"
+    },
+    {
+      label: "Un adjectif",
+      accepte: ["convaincue", "entier", "noué", "bonne", "seule"],
+      feedback: "convaincue, entier, noué, bonne ou seule"
+    },
+    {
+      label: "Un pronom personnel",
+      accepte: ["je", "j'", "me", "l'"],
+      feedback: "je, j', me ou l'"
+    }
+  ];
+
+  var tbodyReperage = document.querySelector("#table-reperage tbody");
+  categoriesReperage.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdCategorie = document.createElement("td");
+    tdCategorie.textContent = item.label;
+    tr.appendChild(tdCategorie);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Exemples possibles :</u></b> " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionReperage(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyReperage.appendChild(tr);
+  });
+
+  function verifierReperageItem(input, item){
+    var saisie = normaliser(input.value);
+    return item.accepte.some(function(mot){ return normaliser(mot) === saisie; });
+  }
+
+  function afficherCorrectionReperage(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierReperageItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsReperage = document.querySelectorAll("#table-reperage input.rep");
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    total += 1;
+    if (verifierCesSe()) correctes++;
+
+    total += 1;
+    if (verifierTu()) correctes++;
+
+    categoriesReperage.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-reperage input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionReperage(input, correction, item);
+      if (verifierReperageItem(input, item)) correctes++;
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    repsCesSe.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+    });
+    corrCesSe.classList.remove("visible");
+
+    repTu.value = "";
+    repTu.classList.remove("correct", "incorrect");
+    corrTu.classList.remove("visible");
+
+    inputsReperage.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
