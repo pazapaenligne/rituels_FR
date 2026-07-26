@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 5 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 5</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Complète le tableau comme il convient :</div>
+    <table id="table-voix">
+      <thead>
+        <tr><th>Phrase à la forme active</th><th>Phrase à la forme passive</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">2</span> Complète par
+      <span style="color:#2e6da4;text-decoration:underline;font-weight:bold;">dans</span> ou
+      <span style="color:#c0392b;text-decoration:underline;font-weight:bold;">d'en</span> :
+    </div>
+    <div class="phrase">
+      1) Il est tombé <input type="text" class="rep rep-inline" id="rep-de1" autocomplete="off" style="width:70px;"> les pommes en apprenant qu'il venait d'hériter.
+    </div>
+    <div class="phrase">
+      2) <input type="text" class="rep rep-inline" id="rep-de2" autocomplete="off" style="width:70px;"> son enfance, on l'a forcée à manger des asperges, c'est pour ça qu'elle refuse désormais <input type="text" class="rep rep-inline" id="rep-de3" autocomplete="off" style="width:70px;"> manger.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-de">OK</button>
+    </div>
+    <div class="correction" id="correction-de"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Mettez le texte au pluriel :</div>
+    <div class="phrase">
+      Elle a vu un chat qui essayait d'attraper un oiseau posé au bord du bassin. Le chat a sauté, mais l'oiseau s'est envolé, alors le chat est tombé à l'eau.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-pluriel" placeholder="Réécris le texte au pluriel ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-pluriel">OK</button>
+    </div>
+    <div class="correction" id="correction-pluriel"></div>
+
+    <div class="sous-consigne">Dans le texte précédent, repère :</div>
+    <table id="table-reperage">
+      <thead>
+        <tr><th>Catégorie</th><th>Exemple trouvé</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : voix active / passive ----------
+
+  var phrasesVoix = [
+    {
+      active: "Les enfants préparent le gâteau.",
+      passive: "Le gâteau est préparé par les enfants."
+    },
+    {
+      active: "Le maire de la ville le construisit.",
+      passive: "Il fut construit par le maire de la ville."
+    },
+    {
+      active: "L'infirmière donnera le médicament.",
+      passive: "Le médicament sera donné par l'infirmière."
+    }
+  ];
+
+  var tbodyVoix = document.querySelector("#table-voix tbody");
+  phrasesVoix.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdActive = document.createElement("td");
+    tdActive.textContent = item.active;
+    tr.appendChild(tdActive);
+
+    var tdPassive = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdPassive.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Réponse :</u></b> " + item.passive;
+    tdPassive.appendChild(correction);
+
+    tr.appendChild(tdPassive);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionVoix(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyVoix.appendChild(tr);
+  });
+
+  function verifierVoixItem(input, item){
+    return normaliserTexte(input.value) === normaliserTexte(item.passive);
+  }
+
+  function afficherCorrectionVoix(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierVoixItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsVoix = document.querySelectorAll("#table-voix input.rep");
+
+  // ---------- Exercice 2 : dans / d'en ----------
+
+  var repDe1 = document.getElementById("rep-de1");
+  var repDe2 = document.getElementById("rep-de2");
+  var repDe3 = document.getElementById("rep-de3");
+  var corrDe = document.getElementById("correction-de");
+
+  function verifierDe(){
+    var v1 = normaliser(repDe1.value);
+    var v2 = normaliser(repDe2.value);
+    var v3 = normaliser(repDe3.value);
+    var ok1 = (v1 === "dans");
+    var ok2 = (v2 === "dans");
+    var ok3 = (v3 === "d'en");
+
+    repDe1.classList.remove("correct", "incorrect");
+    repDe2.classList.remove("correct", "incorrect");
+    repDe3.classList.remove("correct", "incorrect");
+    corrDe.classList.remove("visible");
+
+    if (repDe1.value.trim() !== "") repDe1.classList.add(ok1 ? "correct" : "incorrect");
+    if (repDe2.value.trim() !== "") repDe2.classList.add(ok2 ? "correct" : "incorrect");
+    if (repDe3.value.trim() !== "") repDe3.classList.add(ok3 ? "correct" : "incorrect");
+
+    if (!ok1 || !ok2 || !ok3) {
+      corrDe.innerHTML = "<b><u>Réponses :</u></b> « <b>dans</b> » (préposition) pour « tombé <b>dans</b> les pommes » et « <b>Dans</b> son enfance ».<br>« <b>d'en</b> » (de + en, pronom) pour « refuse <b>d'en</b> manger » (= de manger des asperges).";
+      corrDe.classList.add("visible");
+    }
+
+    return ok1 && ok2 && ok3;
+  }
+
+  document.getElementById("btn-ok-de").addEventListener("click", verifierDe);
+
+  // ---------- Exercice 3 : mise au pluriel ----------
+
+  var repPluriel = document.getElementById("rep-pluriel");
+  var corrPluriel = document.getElementById("correction-pluriel");
+
+  var texteplurielCorrige = "Elles ont vu des chats qui essayaient d'attraper des oiseaux posés au bord des bassins. Les chats ont sauté, mais les oiseaux se sont envolés, alors les chats sont tombés à l'eau.";
+
+  function verifierPluriel(){
+    repPluriel.classList.remove("correct", "incorrect");
+    corrPluriel.classList.remove("visible", "info");
+
+    if (repPluriel.value.trim() === "") return false;
+
+    var ok = normaliserTexte(repPluriel.value) === normaliserTexte(texteplurielCorrige);
+
+    if (ok) {
+      repPluriel.classList.add("correct");
+    } else {
+      repPluriel.classList.add("incorrect");
+      corrPluriel.innerHTML = "<b><u>Attention aux accords en cascade</u></b> (déterminants, verbes, participes) :<br><br>" + texteplurielCorrige;
+      corrPluriel.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-pluriel").addEventListener("click", verifierPluriel);
+
+  // ---------- Exercice 3 (suite) : repérage de catégories grammaticales ----------
+
+  var categoriesReperage = [
+    {
+      label: "Un déterminant",
+      accepte: ["un", "du", "le", "l'"],
+      feedback: "un, du, le ou l'"
+    },
+    {
+      label: "Un nom",
+      accepte: ["chat", "oiseau", "bord", "bassin", "eau"],
+      feedback: "chat, oiseau, bord, bassin ou eau"
+    },
+    {
+      label: "Un verbe",
+      accepte: ["a", "est", "essayait", "vu", "sauté", "envolé", "tombé", "attraper"],
+      feedback: "a, est, essayait, vu, sauté, envolé, tombé (conjugués/participes), ou attraper (à l'infinitif)"
+    },
+    {
+      label: "Un adjectif",
+      accepte: ["posé"],
+      feedback: "posé"
+    },
+    {
+      label: "Un pronom personnel",
+      accepte: ["elle"],
+      feedback: "elle"
+    }
+  ];
+
+  var tbodyReperage = document.querySelector("#table-reperage tbody");
+  categoriesReperage.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdCategorie = document.createElement("td");
+    tdCategorie.textContent = item.label;
+    tr.appendChild(tdCategorie);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Exemples possibles :</u></b> " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionReperage(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyReperage.appendChild(tr);
+  });
+
+  function verifierReperageItem(input, item){
+    var saisie = normaliser(input.value);
+    return item.accepte.some(function(mot){ return normaliser(mot) === saisie; });
+  }
+
+  function afficherCorrectionReperage(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierReperageItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsReperage = document.querySelectorAll("#table-reperage input.rep");
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    phrasesVoix.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-voix input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionVoix(input, correction, item);
+      if (verifierVoixItem(input, item)) correctes++;
+    });
+
+    total += 1;
+    if (verifierDe()) correctes++;
+
+    total += 1;
+    if (verifierPluriel()) correctes++;
+
+    categoriesReperage.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-reperage input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionReperage(input, correction, item);
+      if (verifierReperageItem(input, item)) correctes++;
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    inputsVoix.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    [repDe1, repDe2, repDe3].forEach(function(r){
+      r.value = "";
+      r.classList.remove("correct", "incorrect");
+    });
+    corrDe.classList.remove("visible");
+
+    repPluriel.value = "";
+    repPluriel.classList.remove("correct", "incorrect");
+    corrPluriel.classList.remove("visible");
+
+    inputsReperage.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
