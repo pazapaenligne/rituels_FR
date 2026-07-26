@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 1 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 1</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Complète le tableau comme il convient :</div>
+    <table id="table-voix">
+      <thead>
+        <tr><th>Phrase à la forme active</th><th>Phrase à la forme passive</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">2</span> Complète par mais ou mes :</div>
+    <div class="phrase">
+      1) Je devais prendre l'avion ce matin, <input type="text" class="rep rep-inline" id="rep-mm1" autocomplete="off" style="width:70px;"> j'ai oublié mon passeport à la maison et le chauffeur de taxi est parti avec <input type="text" class="rep rep-inline" id="rep-mm2" autocomplete="off" style="width:70px;"> affaires.
+    </div>
+    <div class="phrase">
+      2) <input type="text" class="rep rep-inline" id="rep-mm3" autocomplete="off" style="width:70px;"> frères et sœurs sont <input type="text" class="rep rep-inline" id="rep-mm4" autocomplete="off" style="width:70px;"> meilleurs amis <input type="text" class="rep rep-inline" id="rep-mm5" autocomplete="off" style="width:70px;"> il nous arrive d'avoir des différends.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-mm">OK</button>
+    </div>
+    <div class="correction" id="correction-mm"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Réécris le texte en mettant les verbes au futur :</div>
+    <div class="phrase">
+      Cette année Amir a 25 ans. Il déménage pour s'installer en centre-ville. Il vend sa voiture et achète un vélo chromé. Il commence un nouveau travail et se réunit avec ses amis en fin de journée. Ensemble, ils vont au musée et à la bibliothèque.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-futur" placeholder="Réécris le texte au futur ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-futur">OK</button>
+    </div>
+    <div class="correction" id="correction-futur"></div>
+
+    <div class="sous-consigne">Dans le texte précédent, repère :</div>
+    <table id="table-reperage">
+      <thead>
+        <tr><th>Catégorie</th><th>Exemple trouvé</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : voix active / passive ----------
+
+  var phrasesVoix = [
+    {
+      active: "Sam fait la vaisselle tous les soirs.",
+      passive: "La vaisselle est faite par Sam tous les soirs."
+    },
+    {
+      active: "Le loup dévore rapidement l'agneau.",
+      passive: "L'agneau est rapidement dévoré par le loup."
+    },
+    {
+      active: "Jim n'a pas sorti le chien.",
+      passive: "Le chien n'a pas été sorti par Jim."
+    }
+  ];
+
+  var tbodyVoix = document.querySelector("#table-voix tbody");
+  phrasesVoix.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdActive = document.createElement("td");
+    tdActive.textContent = item.active;
+    tr.appendChild(tdActive);
+
+    var tdPassive = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdPassive.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Réponse :</u></b> " + item.passive;
+    tdPassive.appendChild(correction);
+
+    tr.appendChild(tdPassive);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionVoix(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyVoix.appendChild(tr);
+  });
+
+  function verifierVoixItem(input, item){
+    return normaliserTexte(input.value) === normaliserTexte(item.passive);
+  }
+
+  function afficherCorrectionVoix(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierVoixItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsVoix = document.querySelectorAll("#table-voix input.rep");
+
+  // ---------- Exercice 2 : mais / mes ----------
+
+  var repMm1 = document.getElementById("rep-mm1");
+  var repMm2 = document.getElementById("rep-mm2");
+  var repMm3 = document.getElementById("rep-mm3");
+  var repMm4 = document.getElementById("rep-mm4");
+  var repMm5 = document.getElementById("rep-mm5");
+  var corrMm = document.getElementById("correction-mm");
+
+  function verifierMm(){
+    var v1 = normaliser(repMm1.value);
+    var v2 = normaliser(repMm2.value);
+    var v3 = normaliser(repMm3.value);
+    var v4 = normaliser(repMm4.value);
+    var v5 = normaliser(repMm5.value);
+    var ok1 = (v1 === "mais");
+    var ok2 = (v2 === "mes");
+    var ok3 = (v3 === "mes");
+    var ok4 = (v4 === "mes");
+    var ok5 = (v5 === "mais");
+
+    [repMm1, repMm2, repMm3, repMm4, repMm5].forEach(function(r){ r.classList.remove("correct", "incorrect"); });
+    corrMm.classList.remove("visible");
+
+    if (repMm1.value.trim() !== "") repMm1.classList.add(ok1 ? "correct" : "incorrect");
+    if (repMm2.value.trim() !== "") repMm2.classList.add(ok2 ? "correct" : "incorrect");
+    if (repMm3.value.trim() !== "") repMm3.classList.add(ok3 ? "correct" : "incorrect");
+    if (repMm4.value.trim() !== "") repMm4.classList.add(ok4 ? "correct" : "incorrect");
+    if (repMm5.value.trim() !== "") repMm5.classList.add(ok5 ? "correct" : "incorrect");
+
+    if (!ok1 || !ok2 || !ok3 || !ok4 || !ok5) {
+      corrMm.innerHTML = "<b><u>Réponses :</u></b><br>1) <b>mais</b> (conjonction d'opposition) ... <b>mes</b> affaires (déterminant possessif, pluriel).<br>2) <b>Mes</b> frères et sœurs ... <b>mes</b> meilleurs amis ... <b>mais</b> il nous arrive.";
+      corrMm.classList.add("visible");
+    }
+
+    return ok1 && ok2 && ok3 && ok4 && ok5;
+  }
+
+  document.getElementById("btn-ok-mm").addEventListener("click", verifierMm);
+
+  // ---------- Exercice 3 : réécriture au futur ----------
+
+  var repFutur = document.getElementById("rep-futur");
+  var corrFutur = document.getElementById("correction-futur");
+
+  var texteFuturCorrige = "Cette année, Amir aura 25 ans. Il déménagera pour s'installer en centre-ville. Il vendra sa voiture et achètera un vélo chromé. Il commencera un nouveau travail et se réunira avec ses amis en fin de journée. Ensemble, ils iront au musée et à la bibliothèque.";
+
+  function verifierFutur(){
+    repFutur.classList.remove("correct", "incorrect");
+    corrFutur.classList.remove("visible", "info");
+
+    if (repFutur.value.trim() === "") return false;
+
+    var ok = normaliserTexte(repFutur.value) === normaliserTexte(texteFuturCorrige);
+
+    if (ok) {
+      repFutur.classList.add("correct");
+    } else {
+      repFutur.classList.add("incorrect");
+      corrFutur.innerHTML = "<b><u>Tous les verbes passent au futur</u></b> :<br><br>" + texteFuturCorrige;
+      corrFutur.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-futur").addEventListener("click", verifierFutur);
+
+  // ---------- Exercice 3 (suite) : repérage de catégories grammaticales ----------
+
+  var categoriesReperage = [
+    {
+      label: "Un déterminant",
+      accepte: ["cette", "sa", "un", "ses", "la"],
+      feedback: "cette, sa, un, ses ou la"
+    },
+    {
+      label: "Un nom",
+      accepte: ["année", "ans", "centre-ville", "voiture", "vélo", "travail", "amis", "journée", "musée", "bibliothèque"],
+      feedback: "voiture, vélo, travail, amis, journée, musée ou bibliothèque"
+    },
+    {
+      label: "Un verbe",
+      accepte: ["a", "déménage", "vend", "achète", "commence", "réunit", "vont"],
+      feedback: "a, déménage, vend, achète, commence, réunit ou vont"
+    },
+    {
+      label: "Un adjectif",
+      accepte: ["nouveau", "chromé"],
+      feedback: "nouveau ou chromé"
+    },
+    {
+      label: "Un pronom personnel",
+      accepte: ["il", "ils", "se"],
+      feedback: "il, ils ou se"
+    }
+  ];
+
+  var tbodyReperage = document.querySelector("#table-reperage tbody");
+  categoriesReperage.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdCategorie = document.createElement("td");
+    tdCategorie.textContent = item.label;
+    tr.appendChild(tdCategorie);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Exemples possibles :</u></b> " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionReperage(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyReperage.appendChild(tr);
+  });
+
+  function verifierReperageItem(input, item){
+    var saisie = normaliser(input.value);
+    return item.accepte.some(function(mot){ return normaliser(mot) === saisie; });
+  }
+
+  function afficherCorrectionReperage(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierReperageItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsReperage = document.querySelectorAll("#table-reperage input.rep");
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    phrasesVoix.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-voix input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionVoix(input, correction, item);
+      if (verifierVoixItem(input, item)) correctes++;
+    });
+
+    total += 1;
+    if (verifierMm()) correctes++;
+
+    total += 1;
+    if (verifierFutur()) correctes++;
+
+    categoriesReperage.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-reperage input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionReperage(input, correction, item);
+      if (verifierReperageItem(input, item)) correctes++;
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    inputsVoix.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    [repMm1, repMm2, repMm3, repMm4, repMm5].forEach(function(r){
+      r.value = "";
+      r.classList.remove("correct", "incorrect");
+    });
+    corrMm.classList.remove("visible");
+
+    repFutur.value = "";
+    repFutur.classList.remove("correct", "incorrect");
+    corrFutur.classList.remove("visible");
+
+    inputsReperage.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
