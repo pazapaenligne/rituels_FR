@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 4 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 4</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Complète le tableau comme il convient :</div>
+    <table id="table-synonymes">
+      <thead>
+        <tr><th>Mot</th><th>Synonyme</th><th>Antonyme</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">2</span> Complète par
+      <span style="color:#2e6da4;text-decoration:underline;font-weight:bold;">ces</span>,
+      <span style="color:#c0392b;text-decoration:underline;font-weight:bold;">c'est</span>,
+      <span style="color:#2e8b57;text-decoration:underline;font-weight:bold;">sait</span> ou
+      <span style="color:#8e44ad;text-decoration:underline;font-weight:bold;">s'est</span> :
+    </div>
+    <div class="phrase">
+      1) <input type="text" class="rep rep-inline" id="rep-cs1" autocomplete="off" style="width:70px;"> curieux comme toutes <input type="text" class="rep rep-inline" id="rep-cs2" autocomplete="off" style="width:70px;"> montagnes sont pelées.
+    </div>
+    <div class="phrase">
+      2) Il ne <input type="text" class="rep rep-inline" id="rep-cs3" autocomplete="off" style="width:70px;"> pas comment <input type="text" class="rep rep-inline" id="rep-cs4" autocomplete="off" style="width:70px;"> menhirs ont pu être érigés, d'ailleurs il ne <input type="text" class="rep rep-inline" id="rep-cs5" autocomplete="off" style="width:70px;"> jamais posé la question.
+    </div>
+    <div class="phrase">
+      3) Pourquoi se poser toutes <input type="text" class="rep rep-inline" id="rep-cs6" autocomplete="off" style="width:70px;"> questions auxquelles personne ne <input type="text" class="rep rep-inline" id="rep-cs7" autocomplete="off" style="width:70px;"> répondre.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-cs">OK</button>
+    </div>
+    <div class="correction" id="correction-cs"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Réécris le texte en remplaçant « Lalie » par « Lalie et Lilou » :</div>
+    <div class="phrase">
+      Comme souvent, Lalie comprend en premier, c'est elle qui a deviné. Je ne sais pas comment elle fait, il lui suffit d'un regard et elle sent qu'il se passe une chose anormale, une chose terrible.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-lalie" placeholder="Réécris le texte ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-lalie">OK</button>
+    </div>
+    <div class="correction" id="correction-lalie"></div>
+
+    <div class="sous-consigne">Dans le texte précédent, repère :</div>
+    <table id="table-reperage">
+      <thead>
+        <tr><th>Catégorie</th><th>Exemple trouvé</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : synonymes / antonymes ----------
+
+  var motsSynAnt = [
+    {
+      mot: "Doux",
+      synonymes: ["tendre", "calme", "aimable", "agréable", "délicat", "suave"],
+      antonymes: ["dur", "brutal", "agressif", "rude", "sévère"]
+    },
+    {
+      mot: "Agressif",
+      synonymes: ["violent", "hostile", "brutal", "belliqueux", "menaçant", "combatif"],
+      antonymes: ["doux", "pacifique", "calme", "paisible", "bienveillant"]
+    },
+    {
+      mot: "Hautain",
+      synonymes: ["arrogant", "orgueilleux", "méprisant", "dédaigneux", "condescendant", "fier"],
+      antonymes: ["modeste", "humble", "simple", "accessible", "affable"]
+    }
+  ];
+
+  var tbodySynAnt = document.querySelector("#table-synonymes tbody");
+
+  motsSynAnt.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdSyn = document.createElement("td");
+    var inputSyn = document.createElement("input");
+    inputSyn.type = "text";
+    inputSyn.className = "rep";
+    inputSyn.setAttribute("data-index", index);
+    inputSyn.setAttribute("data-type", "synonyme");
+    inputSyn.setAttribute("autocomplete", "off");
+    tdSyn.appendChild(inputSyn);
+    var corrSyn = document.createElement("div");
+    corrSyn.className = "correction";
+    corrSyn.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.synonymes.join(", ");
+    tdSyn.appendChild(corrSyn);
+    tr.appendChild(tdSyn);
+
+    var tdAnt = document.createElement("td");
+    var inputAnt = document.createElement("input");
+    inputAnt.type = "text";
+    inputAnt.className = "rep";
+    inputAnt.setAttribute("data-index", index);
+    inputAnt.setAttribute("data-type", "antonyme");
+    inputAnt.setAttribute("autocomplete", "off");
+    tdAnt.appendChild(inputAnt);
+    var corrAnt = document.createElement("div");
+    corrAnt.className = "correction";
+    corrAnt.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.antonymes.join(", ");
+    tdAnt.appendChild(corrAnt);
+    tr.appendChild(tdAnt);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodySynAnt.appendChild(tr);
+  });
+
+  function estDansListe(valeur, liste){
+    var v = normaliser(valeur);
+    return liste.some(function(mot){ return normaliser(mot) === v; });
+  }
+
+  function verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item){
+    if (inputSyn.value.trim() === "") {
+      inputSyn.classList.remove("correct", "incorrect");
+      corrSyn.classList.remove("visible");
+    } else if (estDansListe(inputSyn.value, item.synonymes)) {
+      inputSyn.classList.add("correct");
+      inputSyn.classList.remove("incorrect");
+      corrSyn.classList.remove("visible");
+    } else {
+      inputSyn.classList.add("incorrect");
+      inputSyn.classList.remove("correct");
+      corrSyn.classList.add("visible");
+    }
+
+    if (inputAnt.value.trim() === "") {
+      inputAnt.classList.remove("correct", "incorrect");
+      corrAnt.classList.remove("visible");
+    } else if (estDansListe(inputAnt.value, item.antonymes)) {
+      inputAnt.classList.add("correct");
+      inputAnt.classList.remove("incorrect");
+      corrAnt.classList.remove("visible");
+    } else {
+      inputAnt.classList.add("incorrect");
+      inputAnt.classList.remove("correct");
+      corrAnt.classList.add("visible");
+    }
+  }
+
+  // ---------- Exercice 2 : ces / c'est / sait / s'est (7 blancs) ----------
+
+  var repsCs = ["rep-cs1","rep-cs2","rep-cs3","rep-cs4","rep-cs5","rep-cs6","rep-cs7"].map(function(id){
+    return document.getElementById(id);
+  });
+  var attenduCs = ["c'est", "ces", "sait", "ces", "s'est", "ces", "sait"];
+  var corrCs = document.getElementById("correction-cs");
+
+  function verifierCs(){
+    var tousCorrects = true;
+    corrCs.classList.remove("visible");
+
+    repsCs.forEach(function(input, i){
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") {
+        tousCorrects = false;
+        return;
+      }
+      var ok = (normaliser(input.value) === attenduCs[i]);
+      input.classList.add(ok ? "correct" : "incorrect");
+      if (!ok) tousCorrects = false;
+    });
+
+    if (!tousCorrects) {
+      corrCs.innerHTML = "<b><u>Réponses :</u></b><br>" +
+        "1) <b>C'est</b> curieux comme toutes <b>ces</b> montagnes sont pelées.<br>" +
+        "2) Il ne <b>sait</b> pas comment <b>ces</b> menhirs ont pu être érigés, d'ailleurs il ne <b>s'est</b> jamais posé la question.<br>" +
+        "3) Pourquoi se poser toutes <b>ces</b> questions auxquelles personne ne <b>sait</b> répondre.<br>" +
+        "« <b>ces</b> » (déterminant démonstratif pluriel) précède un nom ; « <b>c'est</b> » (ce + est) ; « <b>sait</b> » (verbe savoir conjugué) ; « <b>s'est</b> » (verbe pronominal au passé composé, s' + est).";
+      corrCs.classList.add("visible");
+    }
+
+    return tousCorrects;
+  }
+
+  document.getElementById("btn-ok-cs").addEventListener("click", verifierCs);
+
+  // ---------- Exercice 3 : réécriture Lalie → Lalie et Lilou ----------
+
+  var repLalie = document.getElementById("rep-lalie");
+  var corrLalie = document.getElementById("correction-lalie");
+
+  var texteLalieCorrige = "Comme souvent, Lalie et Lilou comprennent en premier, ce sont elles qui ont deviné. Je ne sais pas comment elles font, il leur suffit d'un regard et elles sentent qu'il se passe une chose anormale, une chose terrible.";
+
+  function verifierLalie(){
+    repLalie.classList.remove("correct", "incorrect");
+    corrLalie.classList.remove("visible", "info");
+
+    if (repLalie.value.trim() === "") return false;
+
+    var ok = normaliserTexte(repLalie.value) === normaliserTexte(texteLalieCorrige);
+
+    if (ok) {
+      repLalie.classList.add("correct");
+    } else {
+      repLalie.classList.add("incorrect");
+      corrLalie.innerHTML = "<b><u>Attention aux accords en cascade</u></b> (verbes, pronoms) :<br><br>" + texteLalieCorrige;
+      corrLalie.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-lalie").addEventListener("click", verifierLalie);
+
+  // ---------- Exercice 3 (suite) : repérage de catégories grammaticales ----------
+
+  var categoriesReperage = [
+    {
+      label: "Un déterminant",
+      accepte: ["un", "une"],
+      feedback: "un ou une"
+    },
+    {
+      label: "Un nom",
+      accepte: ["regard", "chose"],
+      feedback: "regard ou chose"
+    },
+    {
+      label: "Un verbe",
+      accepte: ["comprend", "a", "deviné", "sais", "fait", "suffit", "sent", "passe"],
+      feedback: "comprend, a, deviné, sais, fait, suffit, sent ou passe"
+    },
+    {
+      label: "Un adjectif",
+      accepte: ["anormale", "terrible"],
+      feedback: "anormale ou terrible"
+    },
+    {
+      label: "Un pronom personnel",
+      accepte: ["je", "elle", "il", "lui"],
+      feedback: "je, elle, il ou lui"
+    }
+  ];
+
+  var tbodyReperage = document.querySelector("#table-reperage tbody");
+  categoriesReperage.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdCategorie = document.createElement("td");
+    tdCategorie.textContent = item.label;
+    tr.appendChild(tdCategorie);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Exemples possibles :</u></b> " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionReperage(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyReperage.appendChild(tr);
+  });
+
+  function verifierReperageItem(input, item){
+    var saisie = normaliser(input.value);
+    return item.accepte.some(function(mot){ return normaliser(mot) === saisie; });
+  }
+
+  function afficherCorrectionReperage(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierReperageItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsReperage = document.querySelectorAll("#table-reperage input.rep");
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    motsSynAnt.forEach(function(item, index){
+      var inputSyn = document.querySelector('input[data-index="' + index + '"][data-type="synonyme"]');
+      var inputAnt = document.querySelector('input[data-index="' + index + '"][data-type="antonyme"]');
+      var corrSyn = inputSyn.parentElement.querySelector(".correction");
+      var corrAnt = inputAnt.parentElement.querySelector(".correction");
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+      total += 2;
+      if (inputSyn.classList.contains("correct")) correctes++;
+      if (inputAnt.classList.contains("correct")) correctes++;
+    });
+
+    total += 1;
+    if (verifierCs()) correctes++;
+
+    total += 1;
+    if (verifierLalie()) correctes++;
+
+    categoriesReperage.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-reperage input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionReperage(input, correction, item);
+      if (verifierReperageItem(input, item)) correctes++;
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    document.querySelectorAll("#table-synonymes input.rep").forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    repsCs.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+    });
+    corrCs.classList.remove("visible");
+
+    repLalie.value = "";
+    repLalie.classList.remove("correct", "incorrect");
+    corrLalie.classList.remove("visible");
+
+    inputsReperage.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
