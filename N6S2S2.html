@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 2 - Séance 2</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-phrase{
+    width:100%;
+    text-align:left;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-phrase{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .ligne-phrase input.rep-phrase{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.85em;
+    color:var(--rouge);
+    margin-top:4px;
+    font-style:italic;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 2</div>
+    <div class="tag tag-seance">Séance 2</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Donne la nature des mots dans la phrase suivante :</div>
+    <div class="phrase">Nous avons observé un arc-en-ciel ce matin.</div>
+    <table id="table-nature">
+      <thead>
+        <tr><th>Mot</th><th>Nature</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">2</span> Transforme la phrase suivante au singulier.</div>
+    <div class="phrase">Les commerçants ont vendu des brouettes.</div>
+    <div class="ligne-phrase">
+      <input type="text" class="rep rep-phrase" id="rep-singulier" data-reponse="Le commerçant a vendu une brouette." autocomplete="off">
+      <button type="button" class="btn-ok" data-cible="rep-singulier">OK</button>
+    </div>
+    <div class="correction" id="correction-singulier">Réponse : Le commerçant a vendu une brouette.</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Réécris la phrase précédente au présent de l'indicatif.</div>
+    <div class="ligne-phrase">
+      <input type="text" class="rep rep-phrase" id="rep-present" data-reponse="Le commerçant vend une brouette.|||Les commerçants vendent des brouettes." autocomplete="off">
+      <button type="button" class="btn-ok" data-cible="rep-present">OK</button>
+    </div>
+    <div class="correction" id="correction-present">Réponses acceptées : Le commerçant vend une brouette. / Les commerçants vendent des brouettes.</div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  var motsNature = [
+    {
+      mot: "Nous",
+      accepte: ["pronom", "pronom personnel", "pronom personnel sujet"],
+      feedback: "pronom personnel sujet"
+    },
+    {
+      mot: "avons",
+      accepte: ["auxiliaire", "verbe avoir", "verbe être", "auxiliaire avoir", "auxiliaire être"],
+      feedback: "auxiliaire avoir conjugué au présent (verbe avoir)"
+    },
+    {
+      mot: "observé",
+      accepte: ["participe passé"],
+      feedback: "participe passé du verbe observer"
+    },
+    {
+      mot: "un",
+      accepte: ["déterminant", "article", "déterminant indéfini", "article indéfini", "déterminant défini", "article défini"],
+      feedback: "déterminant : article indéfini"
+    },
+    {
+      mot: "arc-en-ciel",
+      accepte: ["nom", "nom commun", "nom commun masculin", "nom commun féminin", "nom commun masculin singulier", "nom commun composé"],
+      feedback: "nom commun composé, masculin singulier"
+    },
+    {
+      mot: "ce",
+      accepte: ["déterminant", "déterminant démonstratif"],
+      feedback: "déterminant démonstratif"
+    },
+    {
+      mot: "matin",
+      accepte: ["nom", "nom commun", "nom commun masculin", "nom commun féminin", "nom commun masculin singulier"],
+      feedback: "nom commun masculin singulier"
+    }
+  ];
+
+  var tbody = document.querySelector("#table-nature tbody");
+  motsNature.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.textContent = "Réponse : " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionNature(input, correction);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbody.appendChild(tr);
+  });
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\.$/,"")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  var inputsNature = document.querySelectorAll("#table-nature input.rep");
+  var inputsPhrase = document.querySelectorAll("input.rep-phrase");
+
+  function verifierNature(input){
+    var index = parseInt(input.getAttribute("data-index"), 10);
+    var accepte = motsNature[index].accepte;
+    var saisie = normaliser(input.value);
+    return accepte.some(function(rep){ return normaliser(rep) === saisie; });
+  }
+
+  function estPrecis(input){
+    var index = parseInt(input.getAttribute("data-index"), 10);
+    return normaliser(input.value) === normaliser(motsNature[index].feedback);
+  }
+
+  function afficherCorrectionNature(input, correction){
+    var index = parseInt(input.getAttribute("data-index"), 10);
+    var feedback = motsNature[index].feedback;
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible", "info");
+      return;
+    }
+    if (!verifierNature(input)) {
+      input.classList.remove("correct");
+      input.classList.add("incorrect");
+      correction.textContent = "Réponse : " + feedback;
+      correction.classList.remove("info");
+      correction.classList.add("visible");
+    } else if (!estPrecis(input)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.textContent = "Plus précis : " + feedback;
+      correction.classList.add("info", "visible");
+    } else {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible", "info");
+    }
+  }
+
+  function verifierPhrase(input){
+    var attendu = input.getAttribute("data-reponse");
+    var options = attendu.split("|||");
+    var saisie = normaliser(input.value);
+    return options.some(function(rep){ return normaliser(rep) === saisie; });
+  }
+
+  document.querySelectorAll(".ligne-phrase .btn-ok").forEach(function(btn){
+    var input = document.getElementById(btn.getAttribute("data-cible"));
+    var correction = document.getElementById("correction-" + input.id.replace("rep-",""));
+    btn.addEventListener("click", function(){
+      correction.classList.remove("visible");
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") return;
+      if (verifierPhrase(input)) {
+        input.classList.add("correct");
+      } else {
+        input.classList.add("incorrect");
+        correction.classList.add("visible");
+      }
+    });
+  });
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    inputsNature.forEach(function(input){
+      total++;
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionNature(input, correction);
+      if (verifierNature(input)) correctes++;
+    });
+
+    inputsPhrase.forEach(function(input){
+      total++;
+      input.classList.remove("correct", "incorrect");
+      var correction = document.getElementById("correction-" + input.id.replace("rep-",""));
+      if (verifierPhrase(input)) {
+        input.classList.add("correct");
+        correction.classList.remove("visible");
+        correctes++;
+      } else {
+        input.classList.add("incorrect");
+        correction.classList.add("visible");
+      }
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    inputsNature.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible", "info");
+    });
+    inputsPhrase.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      document.getElementById("correction-" + input.id.replace("rep-","")).classList.remove("visible");
+    });
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
