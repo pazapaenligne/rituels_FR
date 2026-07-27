@@ -204,6 +204,8 @@
   .choix-case{
     cursor:pointer;
     padding:10px;
+    text-align:center;
+    font-size:1.3em;
     transition:background 0.15s;
   }
   .choix-case:hover{background:#f0e6d8;}
@@ -342,9 +344,23 @@
       td.addEventListener("click", function(){
         tdPassive.classList.remove("selectionne", "correct", "incorrect");
         tdActive.classList.remove("selectionne", "correct", "incorrect");
+        tdPassive.textContent = "";
+        tdActive.textContent = "";
         td.classList.add("selectionne");
+        td.textContent = "✕";
       });
     });
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "Vérifier";
+    btnOk.addEventListener("click", function(){
+      verifierVoixCocheItem(index);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
 
     tbodyVoixCoche.appendChild(tr);
   });
@@ -461,6 +477,7 @@
   function reinitialiser(){
     document.querySelectorAll(".choix-case").forEach(function(td){
       td.classList.remove("selectionne", "correct", "incorrect");
+      td.textContent = "";
     });
 
     repsAa.forEach(function(input){
