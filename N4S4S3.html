@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 4 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+
+  .choix-case{
+    cursor:pointer;
+    padding:10px;
+    text-align:center;
+    font-size:1.3em;
+    transition:background 0.15s;
+  }
+  .choix-case:hover{background:#f0e6d8;}
+  .choix-case.selectionne{
+    background:#fce9b8;
+    font-weight:bold;
+  }
+  .choix-case.correct{
+    background:#e9f7ef;
+    color:var(--vert);
+    font-weight:bold;
+  }
+  .choix-case.incorrect{
+    background:#fdecea;
+    color:var(--rouge);
+    font-weight:bold;
+  }
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 4</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Coche comme il convient :</div>
+    <table id="table-voixcoche">
+      <thead>
+        <tr><th>Phrase</th><th>Voix passive</th><th>Voix active</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">2</span> Complète par
+      <span style="color:#2e6da4;text-decoration:underline;font-weight:bold;">dans</span> ou
+      <span style="color:#c0392b;text-decoration:underline;font-weight:bold;">d'en</span> :
+    </div>
+    <div class="phrase">
+      1) Si tu tombes <input type="text" class="rep rep-inline" id="rep-de1" autocomplete="off" style="width:70px;"> un puits, tu as peu de chances <input type="text" class="rep rep-inline" id="rep-de2" autocomplete="off" style="width:70px;"> sortir vivant.
+    </div>
+    <div class="phrase">
+      2) Vous vous êtes noyé <input type="text" class="rep rep-inline" id="rep-de3" autocomplete="off" style="width:70px;"> un verre d'eau, permettez-moi <input type="text" class="rep rep-inline" id="rep-de4" autocomplete="off" style="width:70px;"> rire.
+    </div>
+    <div class="phrase">
+      3) Laissez votre clé <input type="text" class="rep rep-inline" id="rep-de5" autocomplete="off" style="width:70px;"> le pot de terre, car je risque <input type="text" class="rep rep-inline" id="rep-de6" autocomplete="off" style="width:70px;"> avoir besoin.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-de">OK</button>
+    </div>
+    <div class="correction" id="correction-de"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Réécris le texte en remplaçant « le volcan » par « les volcans » :</div>
+    <div class="phrase">
+      Son cratère profond rempli de magma dégage une chaleur écrasante. Une forte odeur de soufre se dégage de celui-ci. Le volcan est capable d'éjecter des cendres et de la roche en fusion à plusieurs centaines de mètres de hauteur. En éruption, il est souvent spectaculaire et parfois dangereux. Malgré cela, il attire les populations. En effet, il est une source de richesse pour la terre.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-volcan" placeholder="Réécris le texte ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-volcan">OK</button>
+    </div>
+    <div class="correction" id="correction-volcan"></div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : voix passive / active à cocher ----------
+
+  var phrasesVoixCoche = [
+    { texte: "Deux œuvres de Michel Tremblay ont été jouées dans plusieurs langues.", reponse: "passive" },
+    { texte: "Les livres sont tenus par le comptable.", reponse: "passive" },
+    { texte: "Les policiers arrêtent le voleur.", reponse: "active" }
+  ];
+
+  var tbodyVoixCoche = document.querySelector("#table-voixcoche tbody");
+  phrasesVoixCoche.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdTexte = document.createElement("td");
+    tdTexte.textContent = item.texte;
+    tr.appendChild(tdTexte);
+
+    var tdPassive = document.createElement("td");
+    tdPassive.className = "choix-case";
+    tdPassive.setAttribute("data-index", index);
+    tdPassive.setAttribute("data-choix", "passive");
+    tr.appendChild(tdPassive);
+
+    var tdActive = document.createElement("td");
+    tdActive.className = "choix-case";
+    tdActive.setAttribute("data-index", index);
+    tdActive.setAttribute("data-choix", "active");
+    tr.appendChild(tdActive);
+
+    [tdPassive, tdActive].forEach(function(td){
+      td.addEventListener("click", function(){
+        tdPassive.classList.remove("selectionne", "correct", "incorrect");
+        tdActive.classList.remove("selectionne", "correct", "incorrect");
+        tdPassive.textContent = "";
+        tdActive.textContent = "";
+        td.classList.add("selectionne");
+        td.textContent = "✕";
+      });
+    });
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "Vérifier";
+    btnOk.addEventListener("click", function(){
+      verifierVoixCocheItem(index);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyVoixCoche.appendChild(tr);
+  });
+
+  function verifierVoixCocheItem(index){
+    var item = phrasesVoixCoche[index];
+    var tdPassive = document.querySelector('#table-voixcoche td[data-index="' + index + '"][data-choix="passive"]');
+    var tdActive = document.querySelector('#table-voixcoche td[data-index="' + index + '"][data-choix="active"]');
+    var choisi = null;
+    if (tdPassive.classList.contains("selectionne")) choisi = "passive";
+    if (tdActive.classList.contains("selectionne")) choisi = "active";
+
+    tdPassive.classList.remove("correct", "incorrect");
+    tdActive.classList.remove("correct", "incorrect");
+
+    if (choisi === null) return false;
+
+    var ok = (choisi === item.reponse);
+    var tdChoisi = (choisi === "passive") ? tdPassive : tdActive;
+    tdChoisi.classList.add(ok ? "correct" : "incorrect");
+    return ok;
+  }
+
+  // ---------- Exercice 2 : dans / d'en (6 blancs) ----------
+
+  var repsDe = [];
+  for (var i = 1; i <= 6; i++) { repsDe.push(document.getElementById("rep-de" + i)); }
+  var attenduDe = ["dans", "d'en", "dans", "d'en", "dans", "d'en"];
+  var corrDe = document.getElementById("correction-de");
+
+  function verifierDe(){
+    var tousCorrects = true;
+    corrDe.classList.remove("visible");
+
+    repsDe.forEach(function(input, i){
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") {
+        tousCorrects = false;
+        return;
+      }
+      var ok = (normaliser(input.value) === attenduDe[i]);
+      input.classList.add(ok ? "correct" : "incorrect");
+      if (!ok) tousCorrects = false;
+    });
+
+    if (!tousCorrects) {
+      corrDe.innerHTML = "<b><u>Réponses :</u></b><br>" +
+        "1) Si tu tombes <b>dans</b> un puits, tu as peu de chances <b>d'en</b> sortir vivant.<br>" +
+        "2) Vous vous êtes noyé <b>dans</b> un verre d'eau, permettez-moi <b>d'en</b> rire.<br>" +
+        "3) Laissez votre clé <b>dans</b> le pot de terre, car je risque <b>d'en</b> avoir besoin.<br>" +
+        "« <b>dans</b> » (préposition de lieu) ; « <b>d'en</b> » (de + en, pronom reprenant ce qui précède).";
+      corrDe.classList.add("visible");
+    }
+
+    return tousCorrects;
+  }
+
+  document.getElementById("btn-ok-de").addEventListener("click", verifierDe);
+
+  // ---------- Exercice 3 : réécriture le volcan → les volcans (vérification souple) ----------
+
+  var repVolcan = document.getElementById("rep-volcan");
+  var corrVolcan = document.getElementById("correction-volcan");
+
+  var texteVolcanCorrige = "Leurs cratères profonds remplis de magma dégagent une chaleur écrasante. Une forte odeur de soufre se dégage d'eux. Les volcans sont capables d'éjecter des cendres et de la roche en fusion à plusieurs centaines de mètres de hauteur. En éruption, ils sont souvent spectaculaires et parfois dangereux. Malgré cela, ils attirent les populations. En effet, ils sont une source de richesse pour la terre.";
+
+  var motsClesVolcan = ["leurs cratères", "dégagent", "d'eux", "les volcans", "sont capables", "ils sont", "ils attirent"];
+
+  function verifierVolcan(){
+    repVolcan.classList.remove("correct", "incorrect");
+    corrVolcan.classList.remove("visible", "info");
+
+    if (repVolcan.value.trim() === "") return false;
+
+    var texte = normaliser(repVolcan.value);
+    var manquants = motsClesVolcan.filter(function(mot){ return texte.indexOf(normaliser(mot)) === -1; });
+    var ok = manquants.length === 0;
+
+    if (ok) {
+      repVolcan.classList.add("correct");
+    } else {
+      repVolcan.classList.add("incorrect");
+      corrVolcan.innerHTML = "<b><u>Il manque ou est incorrect :</u></b> " + manquants.map(function(m){ return "<b>" + m + "</b>"; }).join(", ") +
+        "<br><br><b><u>Texte de référence :</u></b><br>" + texteVolcanCorrige;
+      corrVolcan.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-volcan").addEventListener("click", verifierVolcan);
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    phrasesVoixCoche.forEach(function(item, index){
+      total++;
+      if (verifierVoixCocheItem(index)) correctes++;
+    });
+
+    total += 1;
+    if (verifierDe()) correctes++;
+
+    total += 1;
+    if (verifierVolcan()) correctes++;
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    document.querySelectorAll(".choix-case").forEach(function(td){
+      td.classList.remove("selectionne", "correct", "incorrect");
+      td.textContent = "";
+    });
+
+    repsDe.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+    });
+    corrDe.classList.remove("visible");
+
+    repVolcan.value = "";
+    repVolcan.classList.remove("correct", "incorrect");
+    corrVolcan.classList.remove("visible");
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
