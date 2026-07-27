@@ -179,6 +179,34 @@
   }
   .correction.visible{display:block;}
   .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+
+  .qcm-option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:10px 14px;
+    margin-bottom:8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    background:#fffef9;
+    cursor:pointer;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    color:var(--navy);
+    transition:background 0.15s;
+  }
+  .qcm-option:hover{background:#f0e6d8;}
+  .qcm-option.selectionne{
+    background:#fce9b8;
+    border-color:#c9820a;
+    font-weight:bold;
+  }
+  .qcm-option.correct{
+    background:#e9f7ef;
+    border-color:var(--vert);
+    color:var(--vert);
+    font-weight:bold;
+  }
   .correction b, .correction strong{font-weight:bold;}
   .correction u{text-decoration:underline;}
 
@@ -249,15 +277,16 @@
   </div>
 
   <div class="exercice">
-    <div class="consigne"><span class="num">3</span> Dans la phrase suivante, souligne la proposition subordonnée. Justifie.</div>
+    <div class="consigne"><span class="num">3</span> Dans la phrase suivante, clique sur les mots qui composent la proposition subordonnée. Justifie.</div>
     <div class="phrase" id="phrase-cliquable"></div>
     <div class="ligne-ok">
       <button type="button" class="btn-ok" id="btn-ok-cdn">Vérifier le repérage</button>
     </div>
     <div class="correction" id="correction-cdn"></div>
+    <div class="sous-consigne" style="margin-top:12px;">Quelle est la bonne justification ?</div>
+    <div id="qcm-justif"></div>
     <div class="ligne-ok" style="margin-top:10px;">
-      <input type="text" class="rep" id="rep-justif" autocomplete="off" placeholder="Ta justification..." style="flex:1;">
-      <button type="button" class="btn-ok" id="btn-ok-justif">OK</button>
+      <button type="button" class="btn-ok" id="btn-ok-justif">Vérifier</button>
     </div>
     <div class="correction" id="correction-justif"></div>
   </div>
@@ -573,30 +602,41 @@
 
   document.getElementById("btn-ok-cdn").addEventListener("click", verifierCdn);
 
-  // ---------- Exercice 3 (suite) : justification (vérification souple par mots-clés) ----------
+  // ---------- Exercice 3 (suite) : justification en QCM ----------
 
-  var repJustif = document.getElementById("rep-justif");
+  var optionsJustif = [
+    "C'est une proposition subordonnée conjonctive circonstancielle de temps.",
+    "C'est une proposition subordonnée relative qui complète le nom « confidences », introduite par le pronom relatif « que ».",
+    "C'est une proposition subordonnée complétive, complément d'objet du verbe."
+  ];
+  var indexJustifCorrecte = 1;
+
+  var conteneurQcm = document.getElementById("qcm-justif");
+  var qcmOptionsEls = [];
+
+  optionsJustif.forEach(function(texteOption, i){
+    var div = document.createElement("div");
+    div.className = "qcm-option";
+    div.textContent = texteOption;
+    div.setAttribute("data-index", i);
+    div.addEventListener("click", function(){
+      qcmOptionsEls.forEach(function(o){ o.classList.remove("selectionne"); });
+      div.classList.add("selectionne");
+    });
+    conteneurQcm.appendChild(div);
+    qcmOptionsEls.push(div);
+  });
+
   var corrJustif = document.getElementById("correction-justif");
-  var motsClesJustif = ["relative", "que", "confidences"];
 
   function verifierJustif(){
-    repJustif.classList.remove("correct", "incorrect");
-    corrJustif.classList.remove("visible", "info");
+    qcmOptionsEls.forEach(function(o){ o.classList.remove("correct"); });
+    qcmOptionsEls[indexJustifCorrecte].classList.add("correct");
 
-    if (repJustif.value.trim() === "") return false;
+    corrJustif.innerHTML = "<b><u>Justification :</u></b> " + optionsJustif[indexJustifCorrecte];
+    corrJustif.className = "correction visible info";
 
-    var texte = normaliser(repJustif.value);
-    var trouves = motsClesJustif.filter(function(mot){ return texte.indexOf(normaliser(mot)) !== -1; });
-    var ok = trouves.length >= 1;
-
-    if (ok) {
-      repJustif.classList.add("correct");
-    } else {
-      repJustif.classList.add("incorrect");
-      corrJustif.innerHTML = "<b><u>Justification attendue :</u></b> C'est une proposition subordonnée <b>relative</b> qui complète le nom « <b>confidences</b> » en apportant une précision (elle commence par le pronom relatif « <b>que</b> »). Elle dépend donc de la proposition principale.";
-      corrJustif.classList.add("visible");
-    }
-    return ok;
+    return true;
   }
 
   document.getElementById("btn-ok-justif").addEventListener("click", verifierJustif);
@@ -665,9 +705,8 @@
       span.classList.remove("selectionne", "trouve", "faux-positif", "manque");
     });
     corrCdn.classList.remove("visible", "info");
-    repJustif.value = "";
-    repJustif.classList.remove("correct", "incorrect");
-    corrJustif.classList.remove("visible");
+    qcmOptionsEls.forEach(function(o){ o.classList.remove("selectionne", "correct"); });
+    corrJustif.classList.remove("visible", "info");
     document.getElementById("score").textContent = "";
   }
 
