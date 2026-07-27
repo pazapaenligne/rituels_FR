@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 5 - Séance 3</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+
+  .choix-case{
+    cursor:pointer;
+    padding:10px;
+    text-align:center;
+    font-size:1.3em;
+    transition:background 0.15s;
+  }
+  .choix-case:hover{background:#f0e6d8;}
+  .choix-case.selectionne{
+    background:#fce9b8;
+    font-weight:bold;
+  }
+  .choix-case.correct{
+    background:#e9f7ef;
+    color:var(--vert);
+    font-weight:bold;
+  }
+  .choix-case.incorrect{
+    background:#fdecea;
+    color:var(--rouge);
+    font-weight:bold;
+  }
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 5</div>
+    <div class="tag tag-seance">Séance 3</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Coche comme il convient :</div>
+    <table id="table-voixcoche">
+      <thead>
+        <tr><th>Phrase</th><th>Voix passive</th><th>Voix active</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">2</span> Complète par
+      <span style="color:#2e6da4;text-decoration:underline;font-weight:bold;">si</span> ou
+      <span style="color:#c0392b;text-decoration:underline;font-weight:bold;">s'y</span> :
+    </div>
+    <div class="phrase">
+      1) Est-ce que vous jouerez au tennis, même <input type="text" class="rep rep-inline" id="rep-sc1" autocomplete="off" style="width:70px;"> je ne viens pas ?
+    </div>
+    <div class="phrase">
+      2) Tu es parti <input type="text" class="rep rep-inline" id="rep-sc2" autocomplete="off" style="width:70px;"> vite que je n'ai pas pu te parler de mon voyage.
+    </div>
+    <div class="phrase">
+      3) Quand on <input type="text" class="rep rep-inline" id="rep-sc3" autocomplete="off" style="width:70px;"> met, tout devient <input type="text" class="rep rep-inline" id="rep-sc4" autocomplete="off" style="width:70px;"> facile.
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-sc">OK</button>
+    </div>
+    <div class="correction" id="correction-sc"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Réécris le texte en remplaçant « la mouche » par « les mouches » :</div>
+    <div class="phrase">
+      <strong>La mouche</strong><br><br>
+      J'avais une nouvelle amie. C'était une mouche. Une toute petite mouche propre, fine, vive et confiante. Dès que le poêle était allumé, elle sortait de sa cachette et faisait entendre sa musique. (...) Son dîner fini, elle lissait longuement ses ailes, frottait ses petites pattes avec soin et se tenait tranquille sur le livre que je lisais.
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-mouche" placeholder="Réécris le texte ici..."></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-mouche">OK</button>
+    </div>
+    <div class="correction" id="correction-mouche"></div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : voix passive / active à cocher ----------
+
+  var phrasesVoixCoche = [
+    { texte: "L'architecte dessine les plans de maison.", reponse: "active" },
+    { texte: "L'infirmier soigne le malade.", reponse: "active" },
+    { texte: "La mère réveille ses enfants.", reponse: "active" }
+  ];
+
+  var tbodyVoixCoche = document.querySelector("#table-voixcoche tbody");
+  phrasesVoixCoche.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdTexte = document.createElement("td");
+    tdTexte.textContent = item.texte;
+    tr.appendChild(tdTexte);
+
+    var tdPassive = document.createElement("td");
+    tdPassive.className = "choix-case";
+    tdPassive.setAttribute("data-index", index);
+    tdPassive.setAttribute("data-choix", "passive");
+    tr.appendChild(tdPassive);
+
+    var tdActive = document.createElement("td");
+    tdActive.className = "choix-case";
+    tdActive.setAttribute("data-index", index);
+    tdActive.setAttribute("data-choix", "active");
+    tr.appendChild(tdActive);
+
+    [tdPassive, tdActive].forEach(function(td){
+      td.addEventListener("click", function(){
+        tdPassive.classList.remove("selectionne", "correct", "incorrect");
+        tdActive.classList.remove("selectionne", "correct", "incorrect");
+        tdPassive.textContent = "";
+        tdActive.textContent = "";
+        td.classList.add("selectionne");
+        td.textContent = "✕";
+      });
+    });
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "Vérifier";
+    btnOk.addEventListener("click", function(){
+      verifierVoixCocheItem(index);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyVoixCoche.appendChild(tr);
+  });
+
+  function verifierVoixCocheItem(index){
+    var item = phrasesVoixCoche[index];
+    var tdPassive = document.querySelector('#table-voixcoche td[data-index="' + index + '"][data-choix="passive"]');
+    var tdActive = document.querySelector('#table-voixcoche td[data-index="' + index + '"][data-choix="active"]');
+    var choisi = null;
+    if (tdPassive.classList.contains("selectionne")) choisi = "passive";
+    if (tdActive.classList.contains("selectionne")) choisi = "active";
+
+    tdPassive.classList.remove("correct", "incorrect");
+    tdActive.classList.remove("correct", "incorrect");
+
+    if (choisi === null) return false;
+
+    var ok = (choisi === item.reponse);
+    var tdChoisi = (choisi === "passive") ? tdPassive : tdActive;
+    tdChoisi.classList.add(ok ? "correct" : "incorrect");
+    return ok;
+  }
+
+  // ---------- Exercice 2 : si / s'y (4 blancs) ----------
+
+  var repsSc = [];
+  for (var i = 1; i <= 4; i++) { repsSc.push(document.getElementById("rep-sc" + i)); }
+  var attenduSc = ["si", "si", "s'y", "si"];
+  var corrSc = document.getElementById("correction-sc");
+
+  function verifierSc(){
+    var tousCorrects = true;
+    corrSc.classList.remove("visible");
+
+    repsSc.forEach(function(input, i){
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") {
+        tousCorrects = false;
+        return;
+      }
+      var ok = (normaliser(input.value) === attenduSc[i]);
+      input.classList.add(ok ? "correct" : "incorrect");
+      if (!ok) tousCorrects = false;
+    });
+
+    if (!tousCorrects) {
+      corrSc.innerHTML = "<b><u>Réponses :</u></b><br>" +
+        "1) ... même <b>si</b> je ne viens pas ?<br>" +
+        "2) Tu es parti <b>si</b> vite que je n'ai pas pu...<br>" +
+        "3) Quand on <b>s'y</b> met, tout devient <b>si</b> facile.<br>" +
+        "« <b>si</b> » (conjonction de condition ou adverbe d'intensité) ; « <b>s'y</b> » (se + y, pronominal).";
+      corrSc.classList.add("visible");
+    }
+
+    return tousCorrects;
+  }
+
+  document.getElementById("btn-ok-sc").addEventListener("click", verifierSc);
+
+  // ---------- Exercice 3 : réécriture la mouche → les mouches (vérification souple) ----------
+
+  var repMouche = document.getElementById("rep-mouche");
+  var corrMouche = document.getElementById("correction-mouche");
+
+  var texteMoucheCorrige = "Les mouches. J'avais de nouvelles amies. C'étaient des mouches. De toutes petites mouches propres, fines, vives et confiantes. Dès que le poêle était allumé, elles sortaient de leurs cachettes et faisaient entendre leur musique. (...) Leur dîner fini, elles lissaient longuement leurs ailes, frottaient leurs petites pattes avec soin et se tenaient tranquilles sur le livre que je lisais.";
+
+  var motsClesMouche = ["les mouches", "j'avais de nouvelles amies", "c'étaient des mouches", "elles sortaient", "leurs cachettes", "leur musique", "leur dîner", "elles lissaient", "leurs ailes"];
+
+  function verifierMouche(){
+    repMouche.classList.remove("correct", "incorrect");
+    corrMouche.classList.remove("visible", "info");
+
+    if (repMouche.value.trim() === "") return false;
+
+    var texte = normaliser(repMouche.value);
+    var manquants = motsClesMouche.filter(function(mot){ return texte.indexOf(normaliser(mot)) === -1; });
+    var ok = manquants.length === 0;
+
+    if (ok) {
+      repMouche.classList.add("correct");
+    } else {
+      repMouche.classList.add("incorrect");
+      corrMouche.innerHTML = "<b><u>Il manque ou est incorrect :</u></b> " + manquants.map(function(m){ return "<b>" + m + "</b>"; }).join(", ") +
+        "<br><br><b><u>Texte de référence :</u></b><br>" + texteMoucheCorrige;
+      corrMouche.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-mouche").addEventListener("click", verifierMouche);
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    phrasesVoixCoche.forEach(function(item, index){
+      total++;
+      if (verifierVoixCocheItem(index)) correctes++;
+    });
+
+    total += 1;
+    if (verifierSc()) correctes++;
+
+    total += 1;
+    if (verifierMouche()) correctes++;
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    document.querySelectorAll(".choix-case").forEach(function(td){
+      td.classList.remove("selectionne", "correct", "incorrect");
+      td.textContent = "";
+    });
+
+    repsSc.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+    });
+    corrSc.classList.remove("visible");
+
+    repMouche.value = "";
+    repMouche.classList.remove("correct", "incorrect");
+    corrMouche.classList.remove("visible");
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
