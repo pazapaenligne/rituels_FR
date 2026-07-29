@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 2 - Séance 4</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+
+  .choix-case{
+    cursor:pointer;
+    padding:10px;
+    text-align:center;
+    font-size:1.3em;
+    transition:background 0.15s;
+  }
+  .choix-case:hover{background:#f0e6d8;}
+  .choix-case.selectionne{
+    background:#fce9b8;
+    font-weight:bold;
+  }
+  .choix-case.correct{
+    background:#e9f7ef;
+    color:var(--vert);
+    font-weight:bold;
+  }
+  .choix-case.incorrect{
+    background:#fdecea;
+    color:var(--rouge);
+    font-weight:bold;
+  }
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 2</div>
+    <div class="tag tag-seance">Séance 4</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Conjugue les verbes au passé simple :</div>
+
+    <div class="phrase">1) Nous (partir) <input type="text" class="rep rep-inline" id="rep-ps1" autocomplete="off" style="width:140px;"> en bateau.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-ps1">OK</button>
+    </div>
+    <div class="correction" id="correction-ps1"></div>
+
+    <div class="phrase" style="margin-top:14px;">2) Ils (vouloir) <input type="text" class="rep rep-inline" id="rep-ps2" autocomplete="off" style="width:140px;"> des pâtisseries.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-ps2">OK</button>
+    </div>
+    <div class="correction" id="correction-ps2"></div>
+
+    <div class="phrase" style="margin-top:14px;">3) Je (dire) <input type="text" class="rep rep-inline" id="rep-ps3" autocomplete="off" style="width:140px;"> le contraire.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-ps3">OK</button>
+    </div>
+    <div class="correction" id="correction-ps3"></div>
+
+    <div class="phrase" style="margin-top:14px;">4) Elle (mettre) <input type="text" class="rep rep-inline" id="rep-ps4a" autocomplete="off" style="width:140px;"> son écharpe et (enfiler) <input type="text" class="rep rep-inline" id="rep-ps4b" autocomplete="off" style="width:140px;"> ses gants.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-ps4">OK</button>
+    </div>
+    <div class="correction" id="correction-ps4"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">2</span> Sans modifier le temps des verbes, réécris ce texte comme si le point de vue adopté n'était pas interne, mais externe ou omniscient.</div>
+    <div class="phrase">
+      Tout à coup, le souvenir m'est apparu. Ce goût, c'était celui du petit morceau de madeleine que le dimanche matin à Combray, quand j'allais lui dire bonjour dans sa chambre, ma tante Léonie m'offrait après l'avoir trempé dans son infusion de thé et de tilleul. La vue de la petite madeleine ne m'avait rien rappelé avant que je n'y eusse goûté [...].
+    </div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-pov" placeholder="Réécris le texte ici..." style="min-height:140px;"></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-pov">OK</button>
+    </div>
+    <div class="correction" id="correction-pov"></div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : conjugaison au passé simple ----------
+
+  var itemsPs = [
+    { id: "ps1", attendu: ["partîmes", "nous partîmes"] },
+    { id: "ps2", attendu: ["voulurent", "ils voulurent"] },
+    { id: "ps3", attendu: ["dis", "je dis"] }
+  ];
+
+  itemsPs.forEach(function(item){
+    var input = document.getElementById("rep-" + item.id);
+    var correction = document.getElementById("correction-" + item.id);
+    document.getElementById("btn-ok-" + item.id).addEventListener("click", function(){
+      verifierPsItem(input, correction, item.attendu);
+    });
+  });
+
+  function verifierPsItem(input, correction, attendu){
+    input.classList.remove("correct", "incorrect");
+    correction.classList.remove("visible");
+    if (input.value.trim() === "") return false;
+    var saisie = normaliser(input.value);
+    var ok = attendu.some(function(a){ return normaliser(a) === saisie; });
+    if (ok) {
+      input.classList.add("correct");
+    } else {
+      input.classList.add("incorrect");
+      correction.innerHTML = "<b><u>Réponse :</u></b> " + attendu[0];
+      correction.classList.add("visible");
+    }
+    return ok;
+  }
+
+  // item 4 a deux champs (mettre, enfiler)
+  var inputPs4a = document.getElementById("rep-ps4a");
+  var inputPs4b = document.getElementById("rep-ps4b");
+  var corrPs4 = document.getElementById("correction-ps4");
+
+  function verifierPs4(){
+    inputPs4a.classList.remove("correct", "incorrect");
+    inputPs4b.classList.remove("correct", "incorrect");
+    corrPs4.classList.remove("visible");
+
+    if (inputPs4a.value.trim() === "" && inputPs4b.value.trim() === "") return false;
+
+    var okA = normaliser(inputPs4a.value) === normaliser("mit");
+    var okB = normaliser(inputPs4b.value) === normaliser("enfila");
+
+    if (inputPs4a.value.trim() !== "") inputPs4a.classList.add(okA ? "correct" : "incorrect");
+    if (inputPs4b.value.trim() !== "") inputPs4b.classList.add(okB ? "correct" : "incorrect");
+
+    if (!okA || !okB) {
+      corrPs4.innerHTML = "<b><u>Réponses :</u></b> Elle <b>mit</b> son écharpe (passé simple de mettre) et <b>enfila</b> ses gants (passé simple d'enfiler).";
+      corrPs4.classList.add("visible");
+    }
+
+    return okA && okB;
+  }
+
+  document.getElementById("btn-ok-ps4").addEventListener("click", verifierPs4);
+
+  // ---------- Exercice 2 : réécriture avec changement de point de vue (vérification souple) ----------
+
+  var repPov = document.getElementById("rep-pov");
+  var corrPov = document.getElementById("correction-pov");
+
+  var textePovCorrige = "Tout à coup, le souvenir lui est apparu. Ce goût, c'était celui du petit morceau de madeleine que le dimanche matin à Combray, quand il allait lui dire bonjour dans sa chambre, sa tante Léonie lui offrait après l'avoir trempé dans son infusion de thé et de tilleul. La vue de la petite madeleine ne lui avait rien rappelé avant qu'il n'y eût goûté [...].";
+
+  var motsClesPov = ["lui est apparu", "il allait", "sa tante léonie", "lui offrait", "ne lui avait rien rappelé", "qu'il n'y eût goûté"];
+
+  function verifierPov(){
+    repPov.classList.remove("correct", "incorrect");
+    corrPov.classList.remove("visible", "info");
+
+    if (repPov.value.trim() === "") return false;
+
+    var texte = normaliser(repPov.value);
+    var manquants = motsClesPov.filter(function(mot){ return texte.indexOf(normaliser(mot)) === -1; });
+    var ok = manquants.length === 0;
+
+    if (ok) {
+      repPov.classList.add("correct");
+    } else {
+      repPov.classList.add("incorrect");
+      corrPov.innerHTML = "<b><u>Il manque ou est incorrect :</u></b> " + manquants.map(function(m){ return "<b>" + m + "</b>"; }).join(", ") +
+        "<br><br><b><u>Une version possible</u></b> (non confirmée par la prof — à vérifier) :<br>" + textePovCorrige;
+      corrPov.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-pov").addEventListener("click", verifierPov);
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    itemsPs.forEach(function(item){
+      total++;
+      var input = document.getElementById("rep-" + item.id);
+      var correction = document.getElementById("correction-" + item.id);
+      if (verifierPsItem(input, correction, item.attendu)) correctes++;
+    });
+
+    total++;
+    if (verifierPs4()) correctes++;
+
+    total += 1;
+    if (verifierPov()) correctes++;
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    itemsPs.forEach(function(item){
+      var input = document.getElementById("rep-" + item.id);
+      var correction = document.getElementById("correction-" + item.id);
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+    });
+
+    inputPs4a.value = "";
+    inputPs4b.value = "";
+    inputPs4a.classList.remove("correct", "incorrect");
+    inputPs4b.classList.remove("correct", "incorrect");
+    corrPs4.classList.remove("visible");
+
+    repPov.value = "";
+    repPov.classList.remove("correct", "incorrect");
+    corrPov.classList.remove("visible");
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
