@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 1 - Séance 2</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-phrase{
+    width:100%;
+    text-align:left;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-phrase{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .ligne-phrase input.rep-phrase{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+
+  .qcm-option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:10px 14px;
+    margin-bottom:8px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    background:#fffef9;
+    cursor:pointer;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    color:var(--navy);
+    transition:background 0.15s;
+  }
+  .qcm-option:hover{background:#f0e6d8;}
+  .qcm-option.selectionne{
+    background:#fce9b8;
+    border-color:#c9820a;
+    font-weight:bold;
+  }
+  .qcm-option.correct{
+    background:#e9f7ef;
+    border-color:var(--vert);
+    color:var(--vert);
+    font-weight:bold;
+  }
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+
+  .mot-cliquable{
+    cursor:pointer;
+    padding:1px 3px;
+    border-radius:3px;
+  }
+  .mot-cliquable:hover{background:#f0e6d8;}
+  .mot-cliquable.selectionne{
+    background:#fce9b8;
+    text-decoration:underline;
+  }
+  .mot-cliquable.trouve{
+    background:#d9f2e3;
+    color:var(--vert);
+    font-weight:bold;
+    text-decoration:underline;
+  }
+  .mot-cliquable.faux-positif{
+    background:#fbe0dd;
+    color:var(--rouge);
+    text-decoration:line-through;
+  }
+  .mot-cliquable.manque{
+    background:#fdeccb;
+    color:#c9820a;
+    font-weight:bold;
+    border-bottom:2px dotted #c9820a;
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 1</div>
+    <div class="tag tag-seance">Séance 2</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Donne la nature des mots dans la phrase suivante :</div>
+    <div class="phrase">Dans un saladier mettre l'œuf et la farine.</div>
+    <table id="table-nature">
+      <thead>
+        <tr><th>Mot</th><th>Nature</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">2</span> Donne la fonction des mots ou groupes de mots :</div>
+    <div class="phrase">Dans un saladier mettre l'œuf et la farine.</div>
+    <table id="table-fonction">
+      <thead>
+        <tr><th>Mot / groupe de mots</th><th>Fonction</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">3</span> Dans la phrase suivante, clique sur les mots qui composent la proposition subordonnée, puis précise si elle est relative ou complétive. Justifie.</div>
+    <div class="phrase" id="phrase-cliquable"></div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-cdn">Vérifier le repérage</button>
+    </div>
+    <div class="correction" id="correction-cdn"></div>
+
+    <div class="sous-consigne" style="margin-top:12px;">Relative ou complétive ?</div>
+    <div id="qcm-type"></div>
+    <div class="ligne-ok" style="margin-top:10px;">
+      <button type="button" class="btn-ok" id="btn-ok-type">Vérifier</button>
+    </div>
+    <div class="correction" id="correction-type"></div>
+
+    <div class="sous-consigne" style="margin-top:12px;">Quelle est la bonne justification ?</div>
+    <div id="qcm-justif"></div>
+    <div class="ligne-ok" style="margin-top:10px;">
+      <button type="button" class="btn-ok" id="btn-ok-justif">Vérifier</button>
+    </div>
+    <div class="correction" id="correction-justif"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">4</span> Complète le tableau comme il convient :</div>
+    <table id="table-synonymes">
+      <thead>
+        <tr><th>Mot</th><th>Synonyme</th><th>Antonyme</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne">
+      <span class="num">5</span> Complète par
+      <span style="color:#2e6da4;text-decoration:underline;font-weight:bold;">a</span> ou
+      <span style="color:#c0392b;text-decoration:underline;font-weight:bold;">à</span> :
+    </div>
+    <div class="phrase">
+      1) Elle <input type="text" class="rep rep-inline" id="rep-aa1" autocomplete="off" style="width:60px;"> décidé de reprendre ses cours de piano <input type="text" class="rep rep-inline" id="rep-aa2" autocomplete="off" style="width:60px;"> partir de la semaine prochaine.
+    </div>
+    <div class="phrase">
+      2) Je n'ai plus envie d'aller <input type="text" class="rep rep-inline" id="rep-aa3" autocomplete="off" style="width:60px;"> la piscine, il y <input type="text" class="rep rep-inline" id="rep-aa4" autocomplete="off" style="width:60px;"> trop de monde.
+    </div>
+    <div class="phrase">
+      3) Tu es partie <input type="text" class="rep rep-inline" id="rep-aa5" autocomplete="off" style="width:60px;"> cause de la pluie ou parce qu'il <input type="text" class="rep rep-inline" id="rep-aa6" autocomplete="off" style="width:60px;"> fait trop chaud ?
+    </div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-aa">OK</button>
+    </div>
+    <div class="correction" id="correction-aa"></div>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  var motsNature = [
+    {
+      mot: "Dans",
+      accepte: ["préposition"],
+      feedback: "préposition"
+    },
+    {
+      mot: "un",
+      accepte: ["déterminant", "article", "déterminant indéfini", "article indéfini"],
+      feedback: "déterminant indéfini"
+    },
+    {
+      mot: "saladier",
+      accepte: ["nom", "nom commun"],
+      feedback: "nom commun"
+    },
+    {
+      mot: "mettre",
+      accepte: ["verbe", "verbe à l'infinitif", "infinitif"],
+      feedback: "verbe à l'infinitif"
+    },
+    {
+      mot: "l'",
+      accepte: ["déterminant", "article", "déterminant défini", "article défini", "déterminant élidé", "article élidé"],
+      feedback: "déterminant défini élidé"
+    },
+    {
+      mot: "œuf",
+      accepte: ["nom", "nom commun"],
+      feedback: "nom commun"
+    },
+    {
+      mot: "et",
+      accepte: ["conjonction", "conjonction de coordination"],
+      feedback: "conjonction de coordination"
+    },
+    {
+      mot: "la",
+      accepte: ["déterminant", "article", "déterminant défini", "article défini"],
+      feedback: "déterminant défini"
+    },
+    {
+      mot: "farine",
+      accepte: ["nom", "nom commun"],
+      feedback: "nom commun"
+    }
+  ];
+
+  var tbody = document.querySelector("#table-nature tbody");
+  motsNature.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.textContent = "Réponse : " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionNature(input, correction);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbody.appendChild(tr);
+  });
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\.$/,"")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  var inputsNature = document.querySelectorAll("#table-nature input.rep");
+  var inputsPhrase = document.querySelectorAll("input.rep-phrase");
+
+  function verifierNature(input){
+    var index = parseInt(input.getAttribute("data-index"), 10);
+    var accepte = motsNature[index].accepte;
+    var saisie = normaliser(input.value);
+    return accepte.some(function(rep){ return normaliser(rep) === saisie; });
+  }
+
+  function estPrecis(input){
+    var index = parseInt(input.getAttribute("data-index"), 10);
+    return normaliser(input.value) === normaliser(motsNature[index].feedback);
+  }
+
+  function afficherCorrectionNature(input, correction){
+    var index = parseInt(input.getAttribute("data-index"), 10);
+    var feedback = motsNature[index].feedback;
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible", "info");
+      return;
+    }
+    if (!verifierNature(input)) {
+      input.classList.remove("correct");
+      input.classList.add("incorrect");
+      correction.textContent = "Réponse : " + feedback;
+      correction.classList.remove("info");
+      correction.classList.add("visible");
+    } else if (!estPrecis(input)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.textContent = "Plus précis : " + feedback;
+      correction.classList.add("info", "visible");
+    } else {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible", "info");
+    }
+  }
+
+  function verifierPhrase(input){
+    var attendu = input.getAttribute("data-reponse");
+    var options = attendu.split("|||");
+    var saisie = normaliser(input.value);
+    return options.some(function(rep){ return normaliser(rep) === saisie; });
+  }
+
+  document.querySelectorAll(".ligne-phrase .btn-ok").forEach(function(btn){
+    var input = document.getElementById(btn.getAttribute("data-cible"));
+    var correction = document.getElementById("correction-" + input.id.replace("rep-",""));
+    btn.addEventListener("click", function(){
+      correction.classList.remove("visible");
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") return;
+      if (verifierPhrase(input)) {
+        input.classList.add("correct");
+      } else {
+        input.classList.add("incorrect");
+        correction.classList.add("visible");
+      }
+    });
+  });
+
+  // ---------- Exercice 2 : fonction des mots ----------
+
+  var motsFonction = [
+    {
+      mot: "Dans un saladier",
+      accepte: ["ccl", "complément circonstanciel de lieu", "cc de lieu"],
+      feedback: "complément circonstanciel de lieu"
+    },
+    {
+      mot: "mettre",
+      accepte: ["verbe", "noyau du verbe"],
+      feedback: "verbe, noyau du groupe verbal"
+    },
+    {
+      mot: "l'œuf et la farine",
+      accepte: ["cod", "complément d'objet direct", "complément direct"],
+      feedback: "complément d'objet direct (COD) du verbe « mettre »"
+    }
+  ];
+
+  var tbodyFonction = document.querySelector("#table-fonction tbody");
+  motsFonction.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.textContent = "Réponse : " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionFonction(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyFonction.appendChild(tr);
+  });
+
+  function verifierFonctionItem(input, item){
+    var saisie = normaliser(input.value);
+    return item.accepte.some(function(rep){ return normaliser(rep) === saisie; });
+  }
+
+  function afficherCorrectionFonction(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierFonctionItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsFonction = document.querySelectorAll("#table-fonction input.rep");
+
+  // ---------- Exercice 3 : complément du nom par clic ----------
+
+  var phraseCdnMots = ["Je","sais","que","tu","es","triste."];
+  var indexCdn = [2, 3, 4, 5]; // "que tu es triste"
+
+  var conteneurCdn = document.getElementById("phrase-cliquable");
+  var spansCdn = [];
+
+  phraseCdnMots.forEach(function(mot, i){
+    var span = document.createElement("span");
+    span.className = "mot-cliquable";
+    span.textContent = mot;
+    span.setAttribute("data-index", i);
+    span.addEventListener("click", function(){
+      span.classList.toggle("selectionne");
+    });
+    conteneurCdn.appendChild(span);
+    conteneurCdn.appendChild(document.createTextNode(" "));
+    spansCdn.push(span);
+  });
+
+  var corrCdn = document.getElementById("correction-cdn");
+
+  function verifierCdn(){
+    var trouves = 0;
+    var manques = [];
+    var fauxPositifs = [];
+
+    spansCdn.forEach(function(span, i){
+      span.classList.remove("trouve", "faux-positif", "manque");
+      var estCdn = indexCdn.indexOf(i) !== -1;
+      var estSelectionne = span.classList.contains("selectionne");
+
+      if (estCdn && estSelectionne) {
+        span.classList.add("trouve");
+        trouves++;
+      } else if (!estCdn && estSelectionne) {
+        span.classList.add("faux-positif");
+        fauxPositifs.push(span.textContent);
+      } else if (estCdn && !estSelectionne) {
+        span.classList.add("manque");
+        manques.push(span.textContent);
+      }
+    });
+
+    var total = indexCdn.length;
+    var ok = (trouves === total && fauxPositifs.length === 0);
+
+    var html = "<b><u>Proposition subordonnée :</u></b> « <b>que tu es triste</b> » — proposition subordonnée complétive, complément d'objet direct du verbe « <b>sais</b> ».<br>";
+    if (fauxPositifs.length > 0) {
+      html += "Mot(s) sélectionné(s) à tort : <b>" + fauxPositifs.join(", ") + "</b><br>";
+    }
+    if (manques.length > 0) {
+      html += "Mot(s) non repéré(s) : <b>" + manques.join(", ") + "</b><br>";
+    }
+
+    corrCdn.innerHTML = html;
+    corrCdn.className = "correction visible" + (ok ? " info" : "");
+
+    return ok;
+  }
+
+  document.getElementById("btn-ok-cdn").addEventListener("click", verifierCdn);
+
+  // ---------- Exercice 3 (suite) : type relative / complétive en QCM ----------
+
+  var optionsType = ["Relative", "Complétive"];
+  var indexTypeCorrecte = 1;
+
+  var conteneurType = document.getElementById("qcm-type");
+  var qcmTypeEls = [];
+
+  optionsType.forEach(function(texteOption, i){
+    var div = document.createElement("div");
+    div.className = "qcm-option";
+    div.textContent = texteOption;
+    div.setAttribute("data-index", i);
+    div.addEventListener("click", function(){
+      qcmTypeEls.forEach(function(o){ o.classList.remove("selectionne"); });
+      div.classList.add("selectionne");
+    });
+    conteneurType.appendChild(div);
+    qcmTypeEls.push(div);
+  });
+
+  var corrType = document.getElementById("correction-type");
+
+  function verifierType(){
+    qcmTypeEls.forEach(function(o){ o.classList.remove("correct"); });
+    qcmTypeEls[indexTypeCorrecte].classList.add("correct");
+
+    corrType.innerHTML = "<b><u>Réponse :</u></b> " + optionsType[indexTypeCorrecte] + " (elle complète le verbe « sais », pas un nom).";
+    corrType.className = "correction visible info";
+
+    return true;
+  }
+
+  document.getElementById("btn-ok-type").addEventListener("click", verifierType);
+
+  // ---------- Exercice 3 (suite) : justification en QCM ----------
+
+  var optionsJustif = [
+    "C'est une subordonnée complétive, complément d'objet direct du verbe sais ici.",
+    "C'est une subordonnée relative, qui complète un nom de la phrase.",
+    "C'est une subordonnée circonstancielle de temps, liée à l'action principale ici."
+  ];
+  var indexJustifCorrecte = 0;
+
+  var conteneurQcm = document.getElementById("qcm-justif");
+  var qcmOptionsEls = [];
+
+  optionsJustif.forEach(function(texteOption, i){
+    var div = document.createElement("div");
+    div.className = "qcm-option";
+    div.textContent = texteOption;
+    div.setAttribute("data-index", i);
+    div.addEventListener("click", function(){
+      qcmOptionsEls.forEach(function(o){ o.classList.remove("selectionne"); });
+      div.classList.add("selectionne");
+    });
+    conteneurQcm.appendChild(div);
+    qcmOptionsEls.push(div);
+  });
+
+  var corrJustif = document.getElementById("correction-justif");
+
+  function verifierJustif(){
+    qcmOptionsEls.forEach(function(o){ o.classList.remove("correct"); });
+    qcmOptionsEls[indexJustifCorrecte].classList.add("correct");
+
+    corrJustif.innerHTML = "<b><u>Justification :</u></b> " + optionsJustif[indexJustifCorrecte];
+    corrJustif.className = "correction visible info";
+
+    return true;
+  }
+
+  document.getElementById("btn-ok-justif").addEventListener("click", verifierJustif);
+
+  // ---------- Exercice 4 : synonymes / antonymes ----------
+
+  var motsSynAnt = [
+    {
+      mot: "Observer",
+      synonymes: ["regarder", "examiner", "surveiller", "considérer", "scruter"],
+      antonymes: ["ignorer", "négliger"]
+    },
+    {
+      mot: "Triste",
+      synonymes: ["malheureux", "mélancolique", "abattu", "chagriné", "peiné"],
+      antonymes: ["joyeux", "gai", "heureux", "enjoué", "radieux"]
+    },
+    {
+      mot: "Minutieux",
+      synonymes: ["soigneux", "précis", "méticuleux", "consciencieux", "rigoureux"],
+      antonymes: ["négligent", "bâclé", "approximatif", "hâtif", "désordonné"]
+    }
+  ];
+
+  var tbodySynAnt = document.querySelector("#table-synonymes tbody");
+
+  motsSynAnt.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdMot = document.createElement("td");
+    tdMot.textContent = item.mot;
+    tr.appendChild(tdMot);
+
+    var tdSyn = document.createElement("td");
+    var inputSyn = document.createElement("input");
+    inputSyn.type = "text";
+    inputSyn.className = "rep";
+    inputSyn.setAttribute("data-index", index);
+    inputSyn.setAttribute("data-type", "synonyme");
+    inputSyn.setAttribute("autocomplete", "off");
+    tdSyn.appendChild(inputSyn);
+    var corrSyn = document.createElement("div");
+    corrSyn.className = "correction";
+    corrSyn.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.synonymes.join(", ");
+    tdSyn.appendChild(corrSyn);
+    tr.appendChild(tdSyn);
+
+    var tdAnt = document.createElement("td");
+    var inputAnt = document.createElement("input");
+    inputAnt.type = "text";
+    inputAnt.className = "rep";
+    inputAnt.setAttribute("data-index", index);
+    inputAnt.setAttribute("data-type", "antonyme");
+    inputAnt.setAttribute("autocomplete", "off");
+    tdAnt.appendChild(inputAnt);
+    var corrAnt = document.createElement("div");
+    corrAnt.className = "correction";
+    corrAnt.innerHTML = "<b><u>Réponses possibles :</u></b><br>" + item.antonymes.join(", ");
+    tdAnt.appendChild(corrAnt);
+    tr.appendChild(tdAnt);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodySynAnt.appendChild(tr);
+  });
+
+  function estDansListe(valeur, liste){
+    var v = normaliser(valeur);
+    return liste.some(function(mot){ return normaliser(mot) === v; });
+  }
+
+  function verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item){
+    if (inputSyn.value.trim() === "") {
+      inputSyn.classList.remove("correct", "incorrect");
+      corrSyn.classList.remove("visible");
+    } else if (estDansListe(inputSyn.value, item.synonymes)) {
+      inputSyn.classList.add("correct");
+      inputSyn.classList.remove("incorrect");
+      corrSyn.classList.remove("visible");
+    } else {
+      inputSyn.classList.add("incorrect");
+      inputSyn.classList.remove("correct");
+      corrSyn.classList.add("visible");
+    }
+
+    if (inputAnt.value.trim() === "") {
+      inputAnt.classList.remove("correct", "incorrect");
+      corrAnt.classList.remove("visible");
+    } else if (estDansListe(inputAnt.value, item.antonymes)) {
+      inputAnt.classList.add("correct");
+      inputAnt.classList.remove("incorrect");
+      corrAnt.classList.remove("visible");
+    } else {
+      inputAnt.classList.add("incorrect");
+      inputAnt.classList.remove("correct");
+      corrAnt.classList.add("visible");
+    }
+  }
+
+  // ---------- Exercice 5 : a / à (6 blancs) ----------
+
+  var repsAa = [];
+  for (var i = 1; i <= 6; i++) { repsAa.push(document.getElementById("rep-aa" + i)); }
+  var attenduAa = ["a", "à", "à", "a", "à", "a"];
+  var corrAa = document.getElementById("correction-aa");
+
+  function verifierAa(){
+    var tousCorrects = true;
+    corrAa.classList.remove("visible");
+
+    repsAa.forEach(function(input, i){
+      input.classList.remove("correct", "incorrect");
+      if (input.value.trim() === "") {
+        tousCorrects = false;
+        return;
+      }
+      var ok = (normaliser(input.value) === attenduAa[i]);
+      input.classList.add(ok ? "correct" : "incorrect");
+      if (!ok) tousCorrects = false;
+    });
+
+    if (!tousCorrects) {
+      corrAa.innerHTML = "<b><u>Réponses :</u></b><br>" +
+        "1) Elle <b>a</b> décidé de reprendre ses cours de piano <b>à</b> partir de la semaine prochaine.<br>" +
+        "2) Je n'ai plus envie d'aller <b>à</b> la piscine, il y <b>a</b> trop de monde.<br>" +
+        "3) Tu es partie <b>à</b> cause de la pluie ou parce qu'il <b>a</b> fait trop chaud ?<br>" +
+        "« <b>à</b> » (préposition, avec accent) ; « <b>a</b> » (verbe avoir conjugué, sans accent).";
+      corrAa.classList.add("visible");
+    }
+
+    return tousCorrects;
+  }
+
+  document.getElementById("btn-ok-aa").addEventListener("click", verifierAa);
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    inputsNature.forEach(function(input){
+      total++;
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionNature(input, correction);
+      if (verifierNature(input)) correctes++;
+    });
+
+    inputsPhrase.forEach(function(input){
+      total++;
+      input.classList.remove("correct", "incorrect");
+      var correction = document.getElementById("correction-" + input.id.replace("rep-",""));
+      if (verifierPhrase(input)) {
+        input.classList.add("correct");
+        correction.classList.remove("visible");
+        correctes++;
+      } else {
+        input.classList.add("incorrect");
+        correction.classList.add("visible");
+      }
+    });
+
+    inputsFonction.forEach(function(input, index){
+      total++;
+      var item = motsFonction[index];
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionFonction(input, correction, item);
+      if (verifierFonctionItem(input, item)) correctes++;
+    });
+
+    total += 1;
+    if (verifierCdn()) correctes++;
+
+    total += 1;
+    if (verifierType()) correctes++;
+
+    total += 1;
+    if (verifierJustif()) correctes++;
+
+    motsSynAnt.forEach(function(item, index){
+      var inputSyn = document.querySelector('input[data-index="' + index + '"][data-type="synonyme"]');
+      var inputAnt = document.querySelector('input[data-index="' + index + '"][data-type="antonyme"]');
+      var corrSyn = inputSyn.parentElement.querySelector(".correction");
+      var corrAnt = inputAnt.parentElement.querySelector(".correction");
+      verifierLigneSynAnt(inputSyn, inputAnt, corrSyn, corrAnt, item);
+      total += 2;
+      if (inputSyn.classList.contains("correct")) correctes++;
+      if (inputAnt.classList.contains("correct")) correctes++;
+    });
+
+    total += 1;
+    if (verifierAa()) correctes++;
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    inputsNature.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible", "info");
+    });
+    inputsPhrase.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      document.getElementById("correction-" + input.id.replace("rep-","")).classList.remove("visible");
+    });
+    inputsFonction.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+    spansCdn.forEach(function(span){
+      span.classList.remove("selectionne", "trouve", "faux-positif", "manque");
+    });
+    corrCdn.classList.remove("visible", "info");
+    qcmTypeEls.forEach(function(o){ o.classList.remove("selectionne", "correct"); });
+    corrType.classList.remove("visible", "info");
+    qcmOptionsEls.forEach(function(o){ o.classList.remove("selectionne", "correct"); });
+    corrJustif.classList.remove("visible", "info");
+
+    document.querySelectorAll("#table-synonymes input.rep").forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    repsAa.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+    });
+    corrAa.classList.remove("visible");
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
