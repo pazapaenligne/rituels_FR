@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rituel - Semaine 4 - Séance 4</title>
+<style>
+  :root{
+    --cream:#fffdf7;
+    --bleu-clair:#8fd3e8;
+    --teal:#3ba5b8;
+    --teal-dark:#1f7a8c;
+    --navy:#1b3a4b;
+    --vert:#2e8b57;
+    --rouge:#c0392b;
+    --badge:#e5c417;
+    --phrase:#7a3e3e;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--cream);
+    color:var(--navy);
+    padding:24px;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.12;
+    background:var(--teal);
+    z-index:0;
+  }
+  .b1{width:160px;height:160px;top:-60px;left:-60px;}
+  .b2{width:120px;height:120px;top:100px;right:-50px;}
+  .b3{width:100px;height:100px;bottom:80px;left:-40px;}
+  .b4{width:180px;height:180px;bottom:-80px;right:-70px;}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;}
+
+  .header-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+  .tag{
+    padding:12px 22px;
+    border-radius:0 0 14px 14px;
+    color:#fff;
+    font-weight:bold;
+    font-size:1.1em;
+    font-family:Georgia, 'Times New Roman', serif;
+  }
+  .tag-semaine{background:var(--bleu-clair);}
+  .tag-seance{background:var(--teal);}
+  .tag-rituel{background:var(--teal-dark);margin-left:auto;border-radius:14px;}
+
+  .exercice{margin-bottom:34px;}
+
+  .consigne{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+    font-size:1.02em;
+    flex-wrap:wrap;
+  }
+  .num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--teal-dark);
+    color:#fff;
+    font-size:0.85em;
+    font-weight:bold;
+    flex-shrink:0;
+  }
+
+  .phrase{
+    color:var(--phrase);
+    font-weight:bold;
+    margin-bottom:14px;
+    line-height:1.8;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:6px;
+    background:#fff;
+  }
+  th, td{
+    border:1px solid var(--navy);
+    padding:6px;
+    text-align:center;
+    vertical-align:top;
+  }
+  th{background:#eaf6f9;font-size:0.95em;}
+
+  input.rep{
+    width:92%;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:6px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+  }
+  input.rep-inline{
+    width:60px;
+    text-align:center;
+    display:inline-block;
+    vertical-align:middle;
+    font-weight:bold;
+  }
+  input.rep.correct{
+    border-color:var(--vert);
+    background:#e9f7ef;
+    color:var(--vert);
+  }
+  input.rep.incorrect{
+    border-color:var(--rouge);
+    background:#fdecea;
+    color:var(--rouge);
+  }
+
+  textarea.rep-texte{
+    width:100%;
+    min-height:110px;
+    border:1px solid #999;
+    border-radius:4px;
+    padding:8px;
+    font-family:Arial, sans-serif;
+    font-size:0.95em;
+    background:#fffef9;
+    resize:vertical;
+  }
+  textarea.rep-texte.correct{border-color:var(--vert);background:#e9f7ef;}
+  textarea.rep-texte.incorrect{border-color:var(--rouge);background:#fdecea;}
+
+  .actions{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    margin:26px 0 10px;
+  }
+  button{
+    font-family:Arial, sans-serif;
+    font-size:1em;
+    font-weight:bold;
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    color:#fff;
+  }
+  #btnVerifier{background:var(--teal-dark);}
+  #btnVerifier:hover{background:var(--teal);}
+  #btnReset{background:#999;}
+  #btnReset:hover{background:#777;}
+
+  .btn-ok{
+    background:var(--teal-dark);
+    padding:6px 14px;
+    font-size:0.85em;
+    border-radius:6px;
+    flex-shrink:0;
+  }
+  .btn-ok:hover{background:var(--teal);}
+
+  .ligne-ok{
+    display:flex;
+    gap:8px;
+    align-items:flex-start;
+    margin-top:8px;
+  }
+  .ligne-ok textarea{flex:1;}
+
+  #score{
+    text-align:center;
+    font-weight:bold;
+    margin-top:14px;
+    font-size:1.05em;
+    min-height:1.4em;
+  }
+
+  .correction{
+    display:none;
+    font-size:0.92em;
+    color:var(--rouge);
+    margin-top:10px;
+    line-height:1.7;
+    text-align:left;
+    background:#fdf6f0;
+    border-left:3px solid var(--rouge);
+    padding:10px 14px;
+    border-radius:4px;
+  }
+  .correction.visible{display:block;}
+  .correction.info{color:var(--teal-dark);border-left-color:var(--teal-dark);background:#eaf6f9;}
+
+  .choix-case{
+    cursor:pointer;
+    padding:10px;
+    text-align:center;
+    font-size:1.3em;
+    transition:background 0.15s;
+  }
+  .choix-case:hover{background:#f0e6d8;}
+  .choix-case.selectionne{
+    background:#fce9b8;
+    font-weight:bold;
+  }
+  .choix-case.correct{
+    background:#e9f7ef;
+    color:var(--vert);
+    font-weight:bold;
+  }
+  .choix-case.incorrect{
+    background:#fdecea;
+    color:var(--rouge);
+    font-weight:bold;
+  }
+  .correction b, .correction strong{font-weight:bold;}
+  .correction u{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="bubble b1"></div>
+<div class="bubble b2"></div>
+<div class="bubble b3"></div>
+<div class="bubble b4"></div>
+
+<div class="container">
+
+  <div class="header-row">
+    <div class="tag tag-semaine">Semaine 4</div>
+    <div class="tag tag-seance">Séance 4</div>
+    <div class="tag tag-rituel">Rituel</div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">1</span> Conjugue les verbes au passé composé :</div>
+
+    <div class="phrase">1) Les cosmonautes (regagner) <input type="text" class="rep rep-inline" id="rep-pc1" autocomplete="off" style="width:160px;"> la Terre sains et saufs.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-pc1">OK</button>
+    </div>
+    <div class="correction" id="correction-pc1"></div>
+
+    <div class="phrase" style="margin-top:14px;">2) Les salles de bains (restaurer) <input type="text" class="rep rep-inline" id="rep-pc2" autocomplete="off" style="width:160px;">.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-pc2">OK</button>
+    </div>
+    <div class="correction" id="correction-pc2"></div>
+
+    <div class="phrase" style="margin-top:14px;">3) Devant l'ampleur du sinistre, les témoins (rester) <input type="text" class="rep rep-inline" id="rep-pc3" autocomplete="off" style="width:160px;"> sans voix.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-pc3">OK</button>
+    </div>
+    <div class="correction" id="correction-pc3"></div>
+
+    <div class="phrase" style="margin-top:14px;">4) Vous (renoncer) <input type="text" class="rep rep-inline" id="rep-pc4" autocomplete="off" style="width:160px;"> à achever ce puzzle.</div>
+    <div class="ligne-ok">
+      <button type="button" class="btn-ok" id="btn-ok-pc4">OK</button>
+    </div>
+    <div class="correction" id="correction-pc4"></div>
+  </div>
+
+  <div class="exercice">
+    <div class="consigne"><span class="num">2</span> Réécris ce dialogue au style indirect et indirect libre, en modifiant si nécessaire les verbes de parole employés pour introduire les propos des deux personnages.</div>
+    <div class="phrase">
+      Je ne trouve rien d'admirable comme les soleils couchants, reprit Emma, mais au bord de la mer, surtout.<br>
+      - Oh ! J'adore la mer, dit M. Léon.<br>
+      [...]<br>
+      - Il en est de même des paysages de montagnes, reprit Léon. J'ai un cousin qui a voyagé en Suisse l'année dernière, et qui me disait qu'on ne peut se figurer la poésie des lacs, le charme des cascades, l'effet gigantesque des glaciers. [...]
+    </div>
+
+    <div class="sous-consigne" style="margin-top:12px;">Style indirect :</div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-indirect" placeholder="Réécris au style indirect ici..." style="min-height:100px;"></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-indirect">OK</button>
+    </div>
+    <div class="correction" id="correction-indirect"></div>
+
+    <div class="sous-consigne" style="margin-top:14px;">Style indirect libre :</div>
+    <div class="ligne-ok">
+      <textarea class="rep-texte" id="rep-indirectlibre" placeholder="Réécris au style indirect libre ici..." style="min-height:100px;"></textarea>
+    </div>
+    <div class="ligne-ok" style="margin-top:6px;">
+      <button type="button" class="btn-ok" id="btn-ok-indirectlibre">OK</button>
+    </div>
+    <div class="correction" id="correction-indirectlibre"></div>
+
+    <div class="sous-consigne" style="margin-top:14px;">Dans le texte de l'exercice 2, repère :</div>
+    <table id="table-reperage">
+      <thead>
+        <tr><th>Catégorie</th><th>Exemple trouvé</th><th></th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button id="btnVerifier">Vérifier tout</button>
+    <button id="btnReset">Réinitialiser</button>
+  </div>
+
+  <div id="score"></div>
+
+</div>
+
+<script>
+(function(){
+
+  function normaliser(texte){
+    return texte
+      .trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u02BC\u0060\u00B4]/g,"'")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function normaliserTexte(texte){
+    return normaliser(texte).replace(/\.$/,"").replace(/[.,;:!?]/g,"");
+  }
+
+  // ---------- Exercice 1 : conjugaison au passé simple ----------
+
+  var itemsPc = [
+    { id: "pc1", attendu: ["ont regagné", "les cosmonautes ont regagné"], note: "" },
+    { id: "pc2", attendu: ["ont été restaurées", "les salles de bains ont été restaurées"], note: " (forme passive : « restaurer » est subi par le sujet)" },
+    { id: "pc3", attendu: ["sont restés", "les témoins sont restés"], note: "" },
+    { id: "pc4", attendu: ["avez renoncé", "vous avez renoncé"], note: "" }
+  ];
+
+  itemsPc.forEach(function(item){
+    var input = document.getElementById("rep-" + item.id);
+    var correction = document.getElementById("correction-" + item.id);
+    document.getElementById("btn-ok-" + item.id).addEventListener("click", function(){
+      verifierPcItem(input, correction, item.attendu, item.note);
+    });
+  });
+
+  function verifierPcItem(input, correction, attendu, note){
+    input.classList.remove("correct", "incorrect");
+    correction.classList.remove("visible");
+    if (input.value.trim() === "") return false;
+    var saisie = normaliser(input.value);
+    var ok = attendu.some(function(a){ return normaliser(a) === saisie; });
+    if (ok) {
+      input.classList.add("correct");
+    } else {
+      input.classList.add("incorrect");
+      correction.innerHTML = "<b><u>Réponse :</u></b> " + attendu[0] + (note || "");
+      correction.classList.add("visible");
+    }
+    return ok;
+  }
+
+  // ---------- Exercice 2 : style indirect / indirect libre (vérification souple) ----------
+
+  var repIndirect = document.getElementById("rep-indirect");
+  var corrIndirect = document.getElementById("correction-indirect");
+
+  var texteIndirectCorrige = "Emma reprit en disant qu'elle ne trouvait rien d'admirable comme les soleils couchants, surtout au bord de la mer. M. Léon répondit qu'il adorait la mer. Puis Léon reprit la parole en affirmant qu'il en était de même pour les paysages de montagnes. Il expliqua qu'un cousin à lui, qui avait voyagé en Suisse l'année précédente, lui avait dit qu'on ne pouvait pas s'imaginer la poésie des lacs, le charme des cascades, l'effet gigantesque des glaciers.";
+
+  var motsClesIndirect = ["emma reprit en disant", "elle ne trouvait rien", "léon répondit qu'il adorait", "léon reprit la parole", "il en était de même", "qu'on ne pouvait pas"];
+
+  function verifierIndirect(){
+    repIndirect.classList.remove("correct", "incorrect");
+    corrIndirect.classList.remove("visible", "info");
+
+    if (repIndirect.value.trim() === "") return false;
+
+    var texte = normaliser(repIndirect.value);
+    var manquants = motsClesIndirect.filter(function(mot){ return texte.indexOf(normaliser(mot)) === -1; });
+    var ok = manquants.length === 0;
+
+    if (ok) {
+      repIndirect.classList.add("correct");
+    } else {
+      repIndirect.classList.add("incorrect");
+      corrIndirect.innerHTML = "<b><u>Il manque ou est incorrect :</u></b> " + manquants.map(function(m){ return "<b>" + m + "</b>"; }).join(", ") +
+        "<br><br><b><u>Texte de référence :</u></b><br>" + texteIndirectCorrige;
+      corrIndirect.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-indirect").addEventListener("click", verifierIndirect);
+
+  var repIndirectLibre = document.getElementById("rep-indirectlibre");
+  var corrIndirectLibre = document.getElementById("correction-indirectlibre");
+
+  var texteIndirectLibreCorrige = "Emma reprit : elle ne trouvait rien d'admirable comme les soleils couchants, mais au bord de la mer, surtout. Oh, elle adorait la mer, M. Léon ! Il en était de même pour les paysages de montagnes, reprit Léon. Son cousin, l'année dernière, en Suisse, lui avait raconté qu'on ne pouvait imaginer la poésie des lacs, le charme des cascades, l'effet gigantesque des glaciers...";
+
+  var motsClesIndirectLibre = ["emma reprit", "elle ne trouvait rien", "elle adorait la mer", "il en était de même", "son cousin", "lui avait raconté"];
+
+  function verifierIndirectLibre(){
+    repIndirectLibre.classList.remove("correct", "incorrect");
+    corrIndirectLibre.classList.remove("visible", "info");
+
+    if (repIndirectLibre.value.trim() === "") return false;
+
+    var texte = normaliser(repIndirectLibre.value);
+    var manquants = motsClesIndirectLibre.filter(function(mot){ return texte.indexOf(normaliser(mot)) === -1; });
+    var ok = manquants.length === 0;
+
+    if (ok) {
+      repIndirectLibre.classList.add("correct");
+    } else {
+      repIndirectLibre.classList.add("incorrect");
+      corrIndirectLibre.innerHTML = "<b><u>Il manque ou est incorrect :</u></b> " + manquants.map(function(m){ return "<b>" + m + "</b>"; }).join(", ") +
+        "<br><br><b><u>Texte de référence :</u></b><br>" + texteIndirectLibreCorrige;
+      corrIndirectLibre.classList.add("visible");
+    }
+    return ok;
+  }
+
+  document.getElementById("btn-ok-indirectlibre").addEventListener("click", verifierIndirectLibre);
+
+  // ---------- Exercice 2 (suite) : repérage de catégories grammaticales ----------
+
+  var categoriesReperage = [
+    {
+      label: "Un déterminant",
+      accepte: ["les", "la", "un", "l'"],
+      feedback: "les, la, un ou l'"
+    },
+    {
+      label: "Un nom commun",
+      accepte: ["soleils", "couchants", "bord", "mer", "cousin", "année", "poésie", "lacs", "charme", "cascades", "effet", "glaciers"],
+      feedback: "soleils, bord, mer, cousin, année, poésie, lacs, charme, cascades, effet ou glaciers"
+    },
+    {
+      label: "Un pronom relatif",
+      accepte: ["qui"],
+      feedback: "qui"
+    },
+    {
+      label: "Une préposition",
+      accepte: ["au", "en", "de", "à", "comme"],
+      feedback: "au, en, de ou comme"
+    },
+    {
+      label: "Un verbe",
+      accepte: ["trouve", "reprit", "adore", "dit", "est", "ai", "voyagé", "disait", "peut", "figurer"],
+      feedback: "trouve, reprit, adore, dit, est, ai, disait, peut (conjugués), ou voyagé, figurer (participe/infinitif)"
+    },
+    {
+      label: "Un pronom personnel",
+      accepte: ["je", "il", "me", "on"],
+      feedback: "je, il, me ou on"
+    },
+    {
+      label: "Une conjonction de subordination",
+      accepte: ["que", "qu'"],
+      feedback: "que"
+    }
+  ];
+
+  var tbodyReperage = document.querySelector("#table-reperage tbody");
+  categoriesReperage.forEach(function(item, index){
+    var tr = document.createElement("tr");
+
+    var tdCategorie = document.createElement("td");
+    tdCategorie.textContent = item.label;
+    tr.appendChild(tdCategorie);
+
+    var tdRep = document.createElement("td");
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "rep";
+    input.setAttribute("data-index", index);
+    input.setAttribute("autocomplete", "off");
+    tdRep.appendChild(input);
+
+    var correction = document.createElement("div");
+    correction.className = "correction";
+    correction.innerHTML = "<b><u>Exemples possibles :</u></b> " + item.feedback;
+    tdRep.appendChild(correction);
+
+    tr.appendChild(tdRep);
+
+    var tdOk = document.createElement("td");
+    var btnOk = document.createElement("button");
+    btnOk.type = "button";
+    btnOk.className = "btn-ok";
+    btnOk.textContent = "OK";
+    btnOk.addEventListener("click", function(){
+      afficherCorrectionReperage(input, correction, item);
+    });
+    tdOk.appendChild(btnOk);
+    tr.appendChild(tdOk);
+
+    tbodyReperage.appendChild(tr);
+  });
+
+  function verifierReperageItem(input, item){
+    var saisie = normaliser(input.value);
+    return item.accepte.some(function(mot){ return normaliser(mot) === saisie; });
+  }
+
+  function afficherCorrectionReperage(input, correction, item){
+    if (input.value.trim() === "") {
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+      return;
+    }
+    if (verifierReperageItem(input, item)) {
+      input.classList.add("correct");
+      input.classList.remove("incorrect");
+      correction.classList.remove("visible");
+    } else {
+      input.classList.add("incorrect");
+      input.classList.remove("correct");
+      correction.classList.add("visible");
+    }
+  }
+
+  var inputsReperage = document.querySelectorAll("#table-reperage input.rep");
+
+  // ---------- Vérification globale et réinitialisation ----------
+
+  function verifierTout(){
+    var total = 0;
+    var correctes = 0;
+
+    itemsPc.forEach(function(item){
+      total++;
+      var input = document.getElementById("rep-" + item.id);
+      var correction = document.getElementById("correction-" + item.id);
+      if (verifierPcItem(input, correction, item.attendu, item.note)) correctes++;
+    });
+
+    total += 1;
+    if (verifierIndirect()) correctes++;
+
+    total += 1;
+    if (verifierIndirectLibre()) correctes++;
+
+    categoriesReperage.forEach(function(item, index){
+      total++;
+      var input = document.querySelector('#table-reperage input[data-index="' + index + '"]');
+      var correction = input.parentElement.querySelector(".correction");
+      afficherCorrectionReperage(input, correction, item);
+      if (verifierReperageItem(input, item)) correctes++;
+    });
+
+    var score = document.getElementById("score");
+    score.textContent = "Score : " + correctes + " / " + total;
+    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
+  }
+
+  function reinitialiser(){
+    itemsPc.forEach(function(item){
+      var input = document.getElementById("rep-" + item.id);
+      var correction = document.getElementById("correction-" + item.id);
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      correction.classList.remove("visible");
+    });
+
+    repIndirect.value = "";
+    repIndirect.classList.remove("correct", "incorrect");
+    corrIndirect.classList.remove("visible");
+
+    repIndirectLibre.value = "";
+    repIndirectLibre.classList.remove("correct", "incorrect");
+    corrIndirectLibre.classList.remove("visible");
+
+    inputsReperage.forEach(function(input){
+      input.value = "";
+      input.classList.remove("correct", "incorrect");
+      input.parentElement.querySelector(".correction").classList.remove("visible");
+    });
+
+    document.getElementById("score").textContent = "";
+  }
+
+  document.getElementById("btnVerifier").addEventListener("click", verifierTout);
+  document.getElementById("btnReset").addEventListener("click", reinitialiser);
+
+})();
+</script>
+
+</body>
+</html>
