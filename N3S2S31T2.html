@@ -98,6 +98,12 @@
   }
   .texte p{margin:0 0 10px;}
   .texte p:last-child{margin-bottom:0;}
+  .texte.source{
+    background:#f5f5f0;
+    border-left:5px solid var(--teal);
+    line-height:1.7;
+    font-style:italic;
+  }
 
   input.rep{
     width:92%;
@@ -142,13 +148,6 @@
   #btnReset{background:#999;}
   #btnReset:hover{background:#777;}
 
-  #score{
-    text-align:center;
-    font-weight:bold;
-    margin-top:14px;
-    font-size:1.05em;
-    min-height:1.4em;
-  }
 
   .badge{
     position:absolute;
@@ -184,8 +183,6 @@
     <button id="btnReset">Réinitialiser</button>
   </div>
 
-  <div id="score"></div>
-
 </div>
 
 <script>
@@ -198,7 +195,7 @@
       "type": "tableau",
       "colonnes": ["Synonyme", "Antonyme"],
       "lignes": [
-        { "libelle": "Cruel",    "reponses": [["méchant"], ["bienveillant"]] },
+        { "libelle": "Cruel",    "reponses": [["méchant"], ["bienveillant", "gentil"]] },
         { "libelle": "Paisible", "reponses": [["calme"],   ["agité"]] },
         { "libelle": "Agréable", "reponses": [["plaisant"],["désagréable"]] }
       ]
@@ -219,6 +216,8 @@
       "titre": "Exercice 3",
       "consigne": "Réécris le texte en mettant les verbes au passé simple :",
       "type": "texte",
+      "source": ["Il entre dans la maison. Il ferme la porte et s'avance vers la fenêtre. "
+                 + "Dehors, le vent violent souffle fort et les arbres se penchent."],
       "paragraphes": [
         ["Il ", ["entra"], " dans la maison. Il ", ["ferma"], " la porte et ", ["s'avança"],
          " vers la fenêtre. Dehors, le vent violent ", ["souffla"], " fort et les arbres ",
@@ -314,6 +313,17 @@
   }
 
   function construireTexte(bloc, parent){
+    if (bloc.source) {
+      var depart = document.createElement("div");
+      depart.className = "texte source";
+      bloc.source.forEach(function(ligne){
+        var ps = document.createElement("p");
+        ps.textContent = ligne;
+        depart.appendChild(ps);
+      });
+      parent.appendChild(depart);
+    }
+
     var cadre = document.createElement("div");
     cadre.className = "texte";
 
@@ -359,27 +369,17 @@
   var inputs = document.querySelectorAll("input.rep");
 
   function verifier(){
-    var total = 0;
-    var correctes = 0;
-
     inputs.forEach(function(input){
-      total++;
       var i = parseInt(input.getAttribute("data-index"), 10);
-      var saisie = input.value;
 
       input.classList.remove("correct", "incorrect");
 
-      if (comparer(saisie, attendus[i])) {
+      if (comparer(input.value, attendus[i])) {
         input.classList.add("correct");
-        correctes++;
       } else {
         input.classList.add("incorrect");
       }
     });
-
-    var score = document.getElementById("score");
-    score.textContent = "Score : " + correctes + " / " + total;
-    score.style.color = (correctes === total) ? "#2e8b57" : "#1f7a8c";
   }
 
   function reinitialiser(){
@@ -387,7 +387,6 @@
       input.value = "";
       input.classList.remove("correct", "incorrect");
     });
-    document.getElementById("score").textContent = "";
   }
 
   function verifierEnDirect(e){
